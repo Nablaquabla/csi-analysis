@@ -53,7 +53,7 @@ def main(argv):
 
     # What data type is necessary to save the information provided in the csv files. Mainly used to save some storage space
     datatypes = {'timestamp': np.dtype(np.float),
-                 'overflow-flag': np.dtype(bool)
+                 'overflow-flag': np.dtype(bool),
                  'muon-veto-flag': np.dtype(bool),
                  'linear-gate-flag': np.dtype(bool),
                  'global-csi-bl': np.dtype(np.int16),
