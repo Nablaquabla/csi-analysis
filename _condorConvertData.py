@@ -233,7 +233,7 @@ def main(argv):
                     _tdata[0] = ct(_tdata[0])
 
                     evtsInROI = (_tdata[8] != 0)
-                    evtData = _tdata[:][evtsInROI]
+                    evtData = _tdata.T[evtsInROI].T
                     noEvtData = _tdata[0][evtsInROI]
 
                     if create_Dataset:
