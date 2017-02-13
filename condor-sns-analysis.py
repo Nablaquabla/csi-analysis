@@ -49,7 +49,6 @@ def main():
     # Choose run to analyze
     runDirs = ['Run-17-02-08-16-39-02']
 #   runDirs = ['Run-15-06-25-12-53-44']
-#
 #    runDirs = ['Run-15-06-25-00-00-00']
 #    runDirs = ['Run-15-06-25-12-53-44','Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01'] 
@@ -73,7 +72,7 @@ def main():
         possibleSubDirs = ['beam_off_data','beam_on_data','sns_data']
         for psd in possibleSubDirs:
             possibleRuns = os.listdir(mainRunDir + psd)
-	    print possibleRuns
+	    # print possibleRuns
             if run in possibleRuns:
                 subdirs[run] = psd
                 days_in[run] = [x for x in os.listdir(mainRunDir + psd + '/' + run) if 'Settings' not in x]
