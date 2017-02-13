@@ -215,7 +215,8 @@ def main(argv):
 
     for w in ['B','S']:
         create_Dataset = True
-        i0 = 0
+        i0_evt = 0
+        i0_noEvt = 0
         dset = {}
         f.create_group(w)
         for idx,t in enumerate(times):
@@ -230,16 +231,23 @@ def main(argv):
 
                     # Convert timestamps to seconds since epoch (UTC)
                     _tdata[0] = ct(_tdata[0])
+
+                    evtsInROI = (_tdata[8] != 0)
+                    evtData = _tdata[:][evtsInROI]
+                    noEvtData = _tdata[0][evtsInROI]
+
                     if create_Dataset:
                         create_Dataset = False
                         for i,k in enumerate(keys):
-                            print w,k
-                            dset[k] = f.create_dataset('/%s/%s'%(w,k),data=_tdata[i],dtype=datatypes[k],maxshape=(None,))
+                            dset[k] = f.create_dataset('/%s/%s'%(w,k),data=evtData[i],dtype=datatypes[k],maxshape=(None,))
+                        dset['no-event'] = f.create_dataset('/%s/no-event'%(w),data=noEvtData,dtype=datatypes['timestamp'],maxshape=(None,))
                     else:
                         for i,k in enumerate(keys):
-                            dset[k].resize((i0 + len(_tdata[i]),))
-                            dset[k][i0:] = _tdata[i]
-                    i0 += len(_tdata[0])
+                            dset[k].resize((i0_evt + len(evtData[i]),))
+                            dset[k][i0_evt:] = evtData[i]
+                        dset['no-event'].resize((i0_noEvt+len(noEvtData),))
+                    i0_evt += len(evtData[0])
+                    i0_noEvt += len(noEvtData)
                     del _tdata
                 else:
                     continue
