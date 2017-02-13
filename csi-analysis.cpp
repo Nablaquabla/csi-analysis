@@ -22,6 +22,8 @@ const double cmfThreshold = 2.0;
 const int peakFinderAmplitudeThreshold = 4;
 const int peakFinderWidthThreshold = 3;
 const bool saveWaveFormsToFile = false;
+const int peakIntegrationWindowSides = 2;
+const int cmf_peakIntegrationWindowSides = 3;
 
 // Assortment of all distributions that are being tracked throughout the analysis
 struct infoData
@@ -201,10 +203,10 @@ class waveform
 					if (currentPeakWidth >= peakWidthThreshold)
 					{
 						// Begin of peak integration window is 2 samples before pos. threshold crossing
-						peakBegin.push_back( ((i - currentPeakWidth - 2) >= 0 ? (i - currentPeakWidth - 2) : 0) );
+						peakBegin.push_back(((i - currentPeakWidth - peakIntegrationWindowSides) >= 0 ? (i - currentPeakWidth - 2) : 0));
 
 						// End of peak integration window is 2 samples after neg. threshold crossing
-						peakEnd.push_back( ((i + 1) <= 34999 ? (i + 1) : 34999) );
+						peakEnd.push_back(((i + peakIntegrationWindowSides - 1) <= 34999 ? (i + 1) : 34999));
 					}
 					currentPeakWidth = 0;
 				}
@@ -221,10 +223,10 @@ class waveform
 					if (currentPeakWidth >= peakWidthThreshold)
 					{
 						// Begin of peak integration window is 3 samples before pos. threshold crossing
-						cmf_peakBegin.push_back( ((i - currentPeakWidth - 3) >= 0 ? (i - currentPeakWidth - 3) : 0) );
+						cmf_peakBegin.push_back(((i - currentPeakWidth - cmf_peakIntegrationWindowSides) >= 0 ? (i - currentPeakWidth - 3) : 0));
 
 						// End of peak integration window is 3 samples after neg. threshold crossing
-						cmf_peakEnd.push_back( ((i + 2) <= 34999 - cmfWidth ? (i + 2) : 34999 - cmfWidth) );
+						cmf_peakEnd.push_back(((i + cmf_peakIntegrationWindowSides - 1) <= 34999 - cmfWidth ? (i + 2) : 34999 - cmfWidth));
 					}
 					currentPeakWidth = 0;
 				}
@@ -242,7 +244,7 @@ class waveform
 				{
 					int charge = 0;
 					int amplitude = -1;
-					int width = peakEnd[idx] - peakBegin[idx] + 1;
+					int width = peakEnd[idx] - peakBegin[idx] - 2 * peakIntegrationWindowSides + 1;
 
 					// Integrate samples within peak window
 					for (int i = peakBegin[idx]; i <= peakEnd[idx]; i++)
@@ -310,7 +312,7 @@ class waveform
 				{
 					double _tCharge = 0.0;
 					double _tAmplitude = -1;
-					int width = cmf_peakEnd[idx] - cmf_peakBegin[idx] + 1;
+					int width = cmf_peakEnd[idx] - cmf_peakBegin[idx] - 2*cmf_peakIntegrationWindowSides + 1;
 
 					// Integrate samples within peak window
 					for (int i = cmf_peakBegin[idx]; i <= cmf_peakEnd[idx]; i++)
