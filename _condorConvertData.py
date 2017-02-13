@@ -53,9 +53,9 @@ def main(argv):
 
     # What data type is necessary to save the information provided in the csv files. Mainly used to save some storage space
     datatypes = {'timestamp': np.dtype(np.float),
-                 'overflow-flag': np.dtype(bool),
-                 'muon-veto-flag': np.dtype(bool),
-                 'linear-gate-flag': np.dtype(bool),
+                 'overflow-flag': np.dtype(np.uint8),
+                 'muon-veto-flag': np.dtype(np.uint8),
+                 'linear-gate-flag': np.dtype(np.uint8),
                  'global-csi-bl': np.dtype(np.int16),
 
                  'vanilla-pt-peaks': np.dtype(np.uint16),
@@ -132,11 +132,11 @@ def main(argv):
         peakWidth = {'vanilla': np.zeros(51),
                      'cmf': np.zeros(51)}
 
-        peaksB = {'vanilla': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)},
-                  'cmf': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)}}
+        peakB = {'vanilla': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)},
+                 'cmf': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)}}
 
-        peaksS = {'vanilla': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)},
-                  'cmf': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)}}
+        peakS = {'vanilla': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)},
+                 'cmf': {'pt': np.zeros(51), 'roi': np.zeros(51), 'iw': np.zeros(51)}}
 
         muonEventIndices = np.array([])
 
@@ -193,9 +193,9 @@ def main(argv):
                         if idx == 40:
                             peakS['cmf']['iw'] = peakS['cmf']['iw'] + np.array(line.split(),dtype=int)
                         if idx == 42:
-                            muonEventIndices = np.concatenate((muonEventIndices,np.array(line.split(),dtype=int))
+                            muonEventIndices = np.concatenate((muonEventIndices,np.array(line.split(),dtype=int)))
 
-        if len(wfProcessed) > 0:
+        if len(waveformCounter) > 0:
             f.create_dataset('/I/%s/waveformCounter'%sTA[0],data=waveformCounter)
             f.create_dataset('/I/%s/linearGateCounter'%sTA[0],data=linearGateCounter)
             f.create_dataset('/I/%s/overflowCounter'%sTA[0],data=overflowCounter)
@@ -210,8 +210,8 @@ def main(argv):
             for analysisType in ['vanilla','cmf']:
                 f.create_dataset('/I/%s/peakWidth/%s'%(sTA[0],analysisType),data=peakWidth[analysisType])
                 for region in ['pt','roi','iw']:
-                    f.create_dataset('/I/%s/peaksInB/%s/%s'%(sTA[0],analysisType,region),data=peaksB[analysisType][region])
-                    f.create_dataset('/I/%s/peaksInS/%s/%s'%(sTA[0],analysisType,region),data=peaksS[analysisType][region])
+                    f.create_dataset('/I/%s/peaksInB/%s/%s'%(sTA[0],analysisType,region),data=peakB[analysisType][region])
+                    f.create_dataset('/I/%s/peaksInS/%s/%s'%(sTA[0],analysisType,region),data=peakS[analysisType][region])
 
     for w in ['B','S']:
         create_Dataset = True
@@ -225,14 +225,15 @@ def main(argv):
 
                     # Read data and check convert data files with a single entry to arrays
                     _tdata = np.loadtxt('%s/%s/%s/%s-%s'%(mainDir,run,d,w,t)).T
-                    if np.isscalar(_t[0]):
-                        _tdata = np.array([np.array([x]) for x in _tdata
+                    if np.isscalar(_tdata[0]):
+                        _tdata = np.array([np.array([x]) for x in _tdata])
 
                     # Convert timestamps to seconds since epoch (UTC)
                     _tdata[0] = ct(_tdata[0])
                     if create_Dataset:
                         create_Dataset = False
                         for i,k in enumerate(keys):
+                            print w,k
                             dset[k] = f.create_dataset('/%s/%s'%(w,k),data=_tdata[i],dtype=datatypes[k],maxshape=(None,))
                     else:
                         for i,k in enumerate(keys):
