@@ -1,7 +1,6 @@
-#!~/anaconda2/bin/python
+#!/usr/bin/env python
 import os
 import time as tm
-import sys
 
 # Handles the creation of condor files for a given set of directories
 # -----------------------------------------------------------------------------
@@ -10,7 +9,7 @@ def createCondorFile(dataDir,outDir,run,day,times):
     with open('/home/bjs66/CondorFiles/%s-%s.condor'%(run,day),'w') as f:
         
         # Fixed program location'
-        f.write('Executable = /home/bjs66/GitHub/sns-analysis/csi-analysis\n')
+        f.write('Executable = /home/bjs66/GitHub/csi-analysis/csi-analysis\n')
         
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
@@ -49,14 +48,7 @@ def main():
 
     # Choose run to analyze
 #    runDirs = ['Run-15-03-27-12-42-26']
-#    run = 'Run-15-03-30-13-33-05'
-#    run = 'Run-15-04-08-11-38-28'
-#    run = 'Run-15-04-17-16-56-59'
-#    run = 'Run-15-04-29-16-34-44'
 #    runDirs = ['Run-15-05-05-16-09-12']
-#    run = 'Run-15-05-11-11-46-30'
-#    run = 'Run-15-05-19-17-04-44'
-#    run = 'Run-15-05-27-11-13-46'
 #    runDirs = ['Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
     runDirs = ['Run-15-03-27-12-42-26','Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
                'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
@@ -89,37 +81,9 @@ def main():
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
             createCondorFile(dataRunDir,outDir,run,day,len(tList))
-    #        createCondorFile(dataRunDir,outDir,run,day,2)
             cmd = 'condor_submit /home/bjs66/CondorFiles/%s-%s.condor'%(run,day)
             os.system(cmd)
             tm.sleep(1)
  
 if __name__ == '__main__':
     main()
-
-    
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        

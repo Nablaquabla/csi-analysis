@@ -1,8 +1,6 @@
-#!~/anaconda2/bin/python
-
+#!/usr/bin/env python
 import os
 import time as tm
-import sys
 
 # Handles the creation of condor files for a given set of directories
 # -----------------------------------------------------------------------------
@@ -11,7 +9,7 @@ def createCondorFile(dataDir,outDir,run,day,times):
     with open('/home/bjs66/CondorFiles/%s-%s.condor'%(run,day),'w') as f:
         
         # Fixed program location'
-        f.write('Executable = /home/bjs66/GitHub/sns-analysis/csi-analysis\n')
+        f.write('Executable = /home/bjs66/GitHub/csi-analysis/csi-analysis\n')
         
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
@@ -76,30 +74,3 @@ def main(r):
  
 if __name__ == '__main__':
     main(sys.argv[1])
-
-    
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
