@@ -256,7 +256,7 @@ def main(argv):
                             dset[k].resize((appendIdxWithEvent + len(triggersWithEvents[i]),))
                             dset[k][appendIdxWithEvent:] = triggersWithEvents[i]
                         dset['no-event'].resize((appendIdxWithoutEvent+len(triggersWithoutEvents),))
-                        dset['no-event'][appendIdxWithoutEvents:] = triggersWithoutEvents
+                        dset['no-event'][appendIdxWithoutEvent:] = triggersWithoutEvents
                         
                     appendIdxWithEvent = dset['timestamp'].shape[0]
                     appendIdxWithoutEvent = dset['no-event'].shape[0]
