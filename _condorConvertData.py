@@ -246,6 +246,7 @@ def main(argv):
                             dset[k].resize((i0_evt + len(evtData[i]),))
                             dset[k][i0_evt:] = evtData[i]
                         dset['no-event'].resize((i0_noEvt+len(noEvtData),))
+                        dset['no-event'][i0_noEvt:] = noEvtData
                     i0_evt += len(evtData[0])
                     i0_noEvt += len(noEvtData)
                     del _tdata
