@@ -217,14 +217,14 @@ def main(argv):
 
     for w in ['B','S']:
         create_Dataset = True
-        
+
         # Used for appending to resized arrays
         appendIdxWithEvent = 0
         appendIdxWithoutEvent = 0
-        
+
         # Data sets created in the HDF5 file
         dset = {}
-        
+
         f.create_group(w)
         for idx,t in enumerate(times):
             try:
@@ -240,12 +240,12 @@ def main(argv):
                     _tdata[0] = ct(_tdata[0])
 
                     # Split data into triggers with and without events
-                    noEventsInROI = (_tdata[8] == -1)
+                    noEventsInROI = (_tdata[10] == -1)
                     eventsInROI = np.logical_not(noEventsInROI)
-                    
+
                     triggersWithoutEvents = _tdata[0][noEventsInROI]
                     triggersWithEvents = _tdata.T[eventsInROI].T
-                    
+
                     if create_Dataset:
                         create_Dataset = False
                         for i,k in enumerate(keys):
@@ -257,10 +257,10 @@ def main(argv):
                             dset[k][appendIdxWithEvent:] = triggersWithEvents[i]
                         dset['no-event'].resize((appendIdxWithoutEvent+len(triggersWithoutEvents),))
                         dset['no-event'][appendIdxWithoutEvent:] = triggersWithoutEvents
-                        
+
                     appendIdxWithEvent = dset['timestamp'].shape[0]
                     appendIdxWithoutEvent = dset['no-event'].shape[0]
-                    
+
                     del _tdata
                 else:
                     continue
