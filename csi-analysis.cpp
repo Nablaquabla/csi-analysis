@@ -17,8 +17,8 @@
 #include <numeric>
 
 // Global constants
-const unsigned int cmfWidth = 125;
-const double cmfThreshold = 2.0;
+const unsigned int cmfWidth = 150; // = 300 ns
+const double cmfThreshold = 2.7; // ~ 3 * STD
 const int peakFinderAmplitudeThreshold = 3;
 const int peakFinderWidthThreshold = 4;
 const bool saveWaveFormsToFile = false;
