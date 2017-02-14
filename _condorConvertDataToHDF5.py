@@ -45,7 +45,7 @@ def main(argv):
     # Vanilla = Old analysis, using a global baseline estimate
     # CMF = Conditional mean filtered baseline estimate
     # LBL = Local baseline estimate based on 1 us before signal onset
-    keys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','global-csi-bl',
+    keys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','median-csi-bl','average-csi-bl','std-csi-baseline',
             'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
             'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90',
@@ -56,7 +56,9 @@ def main(argv):
                  'overflow-flag': np.dtype(np.uint8),
                  'muon-veto-flag': np.dtype(np.uint8),
                  'linear-gate-flag': np.dtype(np.uint8),
-                 'global-csi-bl': np.dtype(np.int16),
+                 'median-csi-bl': np.dtype(np.int16),
+                 'average-csi-bl': np.dtype(np.float),
+                 'std-csi-bl': np.dtype(np.float),
 
                  'vanilla-pt-peaks': np.dtype(np.uint16),
                  'vanilla-roi-peaks': np.dtype(np.uint16),
@@ -215,9 +217,14 @@ def main(argv):
 
     for w in ['B','S']:
         create_Dataset = True
-        i0_evt = 0
-        i0_noEvt = 0
+        
+        # Used for appending to resized arrays
+        appendIdxWithEvent = 0
+        appendIdxWithoutEvent = 0
+        
+        # Data sets created in the HDF5 file
         dset = {}
+        
         f.create_group(w)
         for idx,t in enumerate(times):
             try:
@@ -232,23 +239,28 @@ def main(argv):
                     # Convert timestamps to seconds since epoch (UTC)
                     _tdata[0] = ct(_tdata[0])
 
-                    evtsInROI = (_tdata[8] != -1)
-                    evtData = _tdata.T[evtsInROI].T
-                    noEvtData = _tdata[0][np.logical_not(evtsInROI)]
-
+                    # Split data into triggers with and without events
+                    noEventsInROI = (_tdata[8] == -1)
+                    eventsInROI = np.logical_not(noEventsInROI)
+                    
+                    triggersWithoutEvents = _tdata[0][noEventsInROI]
+                    triggersWithEvents = _tdata.T[eventsInROI].T
+                    
                     if create_Dataset:
                         create_Dataset = False
                         for i,k in enumerate(keys):
-                            dset[k] = f.create_dataset('/%s/%s'%(w,k),data=evtData[i],dtype=datatypes[k],maxshape=(None,))
-                        dset['no-event'] = f.create_dataset('/%s/no-event'%(w),data=noEvtData,dtype=datatypes['timestamp'],maxshape=(None,))
+                            dset[k] = f.create_dataset('/%s/%s'%(w,k),data=triggersWithEvents[i],dtype=datatypes[k],maxshape=(None,))
+                        dset['no-event'] = f.create_dataset('/%s/no-event'%(w),data=triggersWithoutEvents,dtype=datatypes['timestamp'],maxshape=(None,))
                     else:
                         for i,k in enumerate(keys):
-                            dset[k].resize((i0_evt + len(evtData[i]),))
-                            dset[k][i0_evt:] = evtData[i]
-                        dset['no-event'].resize((i0_noEvt+len(noEvtData),))
-                        dset['no-event'][i0_noEvt:] = noEvtData
-                    i0_evt += len(evtData[0])
-                    i0_noEvt += len(noEvtData)
+                            dset[k].resize((appendIdxWithEvent + len(triggersWithEvents[i]),))
+                            dset[k][appendIdxWithEvent:] = triggersWithEvents[i]
+                        dset['no-event'].resize((appendIdxWithoutEvent+len(triggersWithoutEvents),))
+                        dset['no-event'][appendIdxWith:] = triggersWithoutEvents
+                        
+                    appendIdxWithEvent = dset['timestamp'].shape[0]
+                    appendIdxWithoutEvent = dset['no-event'].shape[0]
+                    
                     del _tdata
                 else:
                     continue

@@ -9,7 +9,7 @@ def createCondorFile(run,day):
     with open('/home/bjs66/CondorFiles/Convert-%s-%s.condor'%(run,day),'w') as f:
 
         # Fixed program location'
-        f.write('Executable = _condorConvertData.py\n')
+        f.write('Executable = _condorConvertDataToHDF5.py\n')
 
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
