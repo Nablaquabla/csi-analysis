@@ -19,8 +19,8 @@
 // Global constants
 const unsigned int cmfWidth = 125;
 const double cmfThreshold = 2.0;
-const int peakFinderAmplitudeThreshold = 4;
-const int peakFinderWidthThreshold = 3;
+const int peakFinderAmplitudeThreshold = 3;
+const int peakFinderWidthThreshold = 4;
 const bool saveWaveFormsToFile = false;
 const int peakIntegrationWindowSides = 2;
 const int cmf_peakIntegrationWindowSides = 3;
@@ -130,6 +130,7 @@ class waveform
 		}
 
 		// Determine and subtract baseline for both CsI and Muon Veto. Only for Vanilla and LBL analysis
+		// In addition calculate the average baseline and the standard deviation for noise monitoring
 		void applyBaselineCorrection()
 		{
 			bool csiBaselineFound = false;
@@ -160,6 +161,29 @@ class waveform
 					}
 				}
 			}
+
+			// Calculate average and standard deviation using algorithm from https://en.wikipedia.org/wiki/Assumed_mean
+			// We exclude samples beyond 5 ADU from the baseline to minimize shifts due to peaks.
+			double A = 0;
+			double B = 0;
+			double N = 0;
+			int classDiff = 0;
+			for (int i = (globalBaselineCsI - 5); i < (globalBaselineCsI + 6); i++)
+			{
+				classDiff = i - globalBaselineCsI;
+				A += classDiff * medianBaselineHistCsI[i + 128];
+				B += classDiff * classDiff * medianBaselineHistCsI[i + 128];
+				N += medianBaselineHistCsI[i + 128];
+			}
+			avgBaselineCsI = globalBaselineCsI + A / N;
+			stdBaselineCsI =  sqrt((B - A*A / N) / (N - 1));
+
+			for (int i = 0; i < 256; i++)
+			{
+				baselineAverage = medianBaselineHistCsI[i] * (i - 128);
+
+			}
+
 			for (int i = 0; i < 35000; i++)
 			{
 				csi[i] = globalBaselineCsI - csi[i];
@@ -395,11 +419,12 @@ class waveform
 						break;
 					}
 				}
-				(signalRegion ? sArrivalIndex : bArrivalIndex) = arrivalIndex;
 
 				// Check that the full IW fits in ROI (i.e. onset happens in the first 6000 samples of ROI)
 				if (arrivalIndex < (endROI - 1500))
 				{
+					(signalRegion ? sArrivalIndex : bArrivalIndex) = arrivalIndex;
+
 					// Determine number of peaks in IW
 					for (int i = peakIndex; i < peakBegin.size(); i++)
 					{
@@ -479,11 +504,12 @@ class waveform
 						break;
 					}
 				}
-				(signalRegion ? cmf_sArrivalIndex : cmf_bArrivalIndex) = arrivalIndex;
 
 				// Check that the full IW fits in ROI (i.e. onset happens in the first 6000 samples of ROI)
 				if (arrivalIndex < (endROI - 1500))
 				{
+					(signalRegion ? cmf_sArrivalIndex : cmf_bArrivalIndex) = arrivalIndex;
+
 					// Determine number of peaks in IW
 					for (int i = peakIndex; i < cmf_peakBegin.size(); i++)
 					{
@@ -664,17 +690,17 @@ class waveform
 		// Write internal data to file
 		void writeEventData(std::ofstream &bOutput, std::ofstream &sOutput)
 		{
-			// Write background data
 			int muonLocation = ((muonEvents.size() > 0) ? muonEvents[0] : -1);
 
-			bOutput << timeStamp << " " << int(overflowFlag) << " " << int(muonVetoFlag) << " " << int(linearGateFlag) << " " << globalBaselineCsI << " ";
+			// Write background data
+			bOutput << timeStamp << " " << int(overflowFlag) << " " << int(muonVetoFlag) << " " << int(linearGateFlag) << " " << globalBaselineCsI << " " << avgBaselineCsI << " " << stdBaselineCsI << " ";
 			bOutput << bPeakCounts[0] << " " << bPeakCounts[1] << " " << bPeakCounts[2] << " " << bArrivalIndex << " " << bChargeIW << " " << bRiseTimes[0] << " " << bRiseTimes[1] << " " << bRiseTimes[2] << " ";
 			bOutput << cmf_bPeakCounts[0] << " " << cmf_bPeakCounts[1] << " " << cmf_bPeakCounts[2] << " " << cmf_bArrivalIndex << " " << cmf_bChargeIW << " " << cmf_bRiseTimes[0] << " " << cmf_bRiseTimes[1] << " " << cmf_bRiseTimes[2] << " ";
 			bOutput << lbl_bChargeIW << " " << lbl_bRiseTimes[0] << " " << lbl_bRiseTimes[1] << " " << lbl_bRiseTimes[2] << " ";
 			bOutput << muonLocation << std::endl;
 
 			// Write signal data
-			sOutput << timeStamp << " " << int(overflowFlag) << " " << int(muonVetoFlag) << " " << int(linearGateFlag) << " " << globalBaselineCsI << " ";
+			sOutput << timeStamp << " " << int(overflowFlag) << " " << int(muonVetoFlag) << " " << int(linearGateFlag) << " " << globalBaselineCsI << " " << avgBaselineCsI << " " << stdBaselineCsI << " ";
 			sOutput << sPeakCounts[0] << " " << sPeakCounts[1] << " " << sPeakCounts[2] << " " << sArrivalIndex << " " << sChargeIW << " " << sRiseTimes[0] << " " << sRiseTimes[1] << " " << sRiseTimes[2] << " ";
 			sOutput << cmf_sPeakCounts[0] << " " << cmf_sPeakCounts[1] << " " << cmf_sPeakCounts[2] << " " << cmf_sArrivalIndex << " " << cmf_sChargeIW << " " << cmf_sRiseTimes[0] << " " << cmf_sRiseTimes[1] << " " << cmf_sRiseTimes[2] << " ";
 			sOutput << lbl_sChargeIW << " " << lbl_sRiseTimes[0] << " " << lbl_sRiseTimes[1] << " " << lbl_sRiseTimes[2] << " ";
@@ -740,6 +766,8 @@ class waveform
 
 			globalBaselineCsI = 0;
 			globalBaselineMuonVeto = 0;
+			avgBaselineCsI = 0;
+			stdBaselineCsI = 0;
 
 			bChargeIW = 0;
 			sChargeIW = 0;
@@ -791,6 +819,8 @@ class waveform
 		std::string timeStamp;
 		int globalBaselineCsI;
 		int globalBaselineMuonVeto;
+		double avgBaselineCsI;
+		double stdBaselineCsI;
 
 		int bChargeIW;
 		int sChargeIW;
