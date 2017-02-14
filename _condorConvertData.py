@@ -232,9 +232,9 @@ def main(argv):
                     # Convert timestamps to seconds since epoch (UTC)
                     _tdata[0] = ct(_tdata[0])
 
-                    evtsInROI = (_tdata[8] != 0)
+                    evtsInROI = (_tdata[8] != -1)
                     evtData = _tdata.T[evtsInROI].T
-                    noEvtData = _tdata[0][evtsInROI]
+                    noEvtData = _tdata[0][np.logical_not(evtsInROI)]
 
                     if create_Dataset:
                         create_Dataset = False
