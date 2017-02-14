@@ -166,14 +166,13 @@ class waveform
 			// We exclude samples beyond 5 ADU from the baseline to minimize shifts due to peaks.
 			double A = 0;
 			double B = 0;
-			double N = 0;
-			int classDiff = 0;
-			for (int i = (globalBaselineCsI - 5); i < (globalBaselineCsI + 6); i++)
+			double N = 0;;
+			for (int i = -5; i <= 5; i++)
 			{
-				classDiff = i - globalBaselineCsI;
-				A += classDiff * medianBaselineHistCsI[i + 128];
-				B += classDiff * classDiff * medianBaselineHistCsI[i + 128];
-				N += medianBaselineHistCsI[i + 128];
+				int histIndex = globalBaselineCsI + 128 + i;
+				A += medianBaselineHistCsI[histIndex] * i;
+				B += medianBaselineHistCsI[histIndex] * i * i;
+				N += medianBaselineHistCsI[histIndex];
 			}
 			avgBaselineCsI = globalBaselineCsI + A / N;
 			stdBaselineCsI =  sqrt((B - A*A / N) / (N - 1));
