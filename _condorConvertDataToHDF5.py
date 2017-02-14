@@ -45,7 +45,7 @@ def main(argv):
     # Vanilla = Old analysis, using a global baseline estimate
     # CMF = Conditional mean filtered baseline estimate
     # LBL = Local baseline estimate based on 1 us before signal onset
-    keys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','median-csi-bl','average-csi-bl','std-csi-baseline',
+    keys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','median-csi-baseline','average-csi-baseline','std-csi-baseline',
             'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
             'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90',
@@ -56,9 +56,9 @@ def main(argv):
                  'overflow-flag': np.dtype(np.uint8),
                  'muon-veto-flag': np.dtype(np.uint8),
                  'linear-gate-flag': np.dtype(np.uint8),
-                 'median-csi-bl': np.dtype(np.int16),
-                 'average-csi-bl': np.dtype(np.float),
-                 'std-csi-bl': np.dtype(np.float),
+                 'median-csi-baseline': np.dtype(np.int16),
+                 'average-csi-baseline': np.dtype(np.float),
+                 'std-csi-baseline': np.dtype(np.float),
 
                  'vanilla-pt-peaks': np.dtype(np.uint16),
                  'vanilla-roi-peaks': np.dtype(np.uint16),
