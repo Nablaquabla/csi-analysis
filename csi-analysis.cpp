@@ -178,12 +178,6 @@ class waveform
 			avgBaselineCsI = globalBaselineCsI + A / N;
 			stdBaselineCsI =  sqrt((B - A*A / N) / (N - 1));
 
-			for (int i = 0; i < 256; i++)
-			{
-				baselineAverage = medianBaselineHistCsI[i] * (i - 128);
-
-			}
-
 			for (int i = 0; i < 35000; i++)
 			{
 				csi[i] = globalBaselineCsI - csi[i];
