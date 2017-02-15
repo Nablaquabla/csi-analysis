@@ -4,6 +4,12 @@
 #PBS -l nodes=1:ppn=1
 #PBS -l walltime=00:01:00
 #PBS -l mem=400mb
-/
-let fileNumber=PBS_ARRAYID-1
-/nfs_home/bjo/GitHub/csi-analysis/csi-analysis 1 $dataDir $fileNumber $outDir 0
+if [ $specificTime == "1" ]; then
+  fileNumber=$time
+else
+  let fileNumber=PBS_ARRAYID-1
+fi
+echo $fileNumber
+echo $analysisMode
+echo $dataDir
+#/nfs_home/bjo/GitHub/csi-analysis/csi-analysis $analysisMode $dataDir $fileNumber $outDir $specificTime
