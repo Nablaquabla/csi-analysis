@@ -26,9 +26,9 @@ ct = np.vectorize(convertTimestamp)
 
 
 def main(argv):
-    mainDir = '/home/bjs66/csi/bjs-analysis'
-    run = argv[1]
-    d = argv[2]
+    mainDir = argv[1]
+    run = argv[2]
+    d = argv[3]
 
     # Check that day analyzed is a normal day, i.e. no DST changes - Not necessary right now,
     # as there was no data being recorded during the fall change. And this is the only time

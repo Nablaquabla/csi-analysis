@@ -46,7 +46,7 @@ def main():
                 days_in[run] = [x for x in os.listdir(mainRunDir + psd + '/' + run) if 'Settings' not in x]
             
     for run in runDirs:
-#    Iterate through all days in a given run folder, create a condor file and run it.                
+        # Iterate through all days in a given run folder, create a condor file and run it.                
         for day in days_in[run]:
             # Prepare paths for further processing
             dataRunDir = mainRunDir + '%s/%s/%s'%(subdirs[run],run,day)
@@ -54,14 +54,14 @@ def main():
         
             # Create output directory if it does not exist
             if not os.path.exists(outDir):
-                os.makedirs(outDir)    
-	    tm.sleep(1.0)
+                os.makedirs(outDir)   
+
+            # Wait for the dir to be created such that no race condition occurs.
+            tm.sleep(1.0)
+            
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
-            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/hcdata-qsub.sh -v analysisMode="1",dataDir="%s",outDir="%s"'%(len(tList), dataRunDir, outDir)
-	    #for currentFileNumber in range(len(tList)):
-	    #	cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/hcdata-qsub.sh -v analysisMode="1",dataDir="%s",processNumber="%d",outDir="%s"'%(dataRunDir, currentFileNumber, outDir)
-	    os.system(cmd)
-#	    print cmd
+            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s"'%(len(tList), dataRunDir, outDir)
+            os.system(cmd)
 if __name__ == "__main__":
     main()

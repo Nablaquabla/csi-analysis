@@ -2,41 +2,6 @@
 import os
 import time as tm
 
-# Handles the creation of condor files for a given set of directories
-# -----------------------------------------------------------------------------
-def createCondorFile(mDir,run,day):
-    # Condor submission file name convention: run-day-time.condor
-    with open('/home/bjs66/CondorFiles/Convert-%s-%s.condor'%(run,day),'w') as f:
-
-        # Fixed program location'
-        f.write('Executable = _convertDataToHDF5.py\n')
-
-        # Arguments passed to the exe:
-        # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
-	    # Set current time to be analzyed (w/o .zip extension!), e.g. 184502
-	    # Set output directory, eg Output/ Run-15-10-02-27-32-23/151002
-        f.write('Arguments = \"%s %s %s\"\n'%(mDir,run,day))
-
-        # Standard cluster universe
-        f.write('universe   = vanilla\n')
-        f.write('getenv     = true\n')
-
-        # Program needs at least 300 MB of free memory to hold unzipped data
-        f.write('request_memory = 600\n')
-
-        # Output, error and log name convention: run-day-time.log/out/err
-        f.write('log = ../../Logs/Convert-%s-%s.log\n'%(run,day))
-        f.write('Output = ../../Outs/Convert-%s-%s.out\n'%(run,day))
-        f.write('Error = ../../Errs/Convert-%s-%s.err\n'%(run,day))
-
-        # Do not write any emails
-        f.write('notification = never\n')
-        f.write('+Department  = Physics\n')
-        f.write('should_transfer_files = NO\n')
-
-        # Add single job to queue
-        f.write('Queue')
-
 # Main function handling all internals
 # -----------------------------------------------------------------------------
 def main():
@@ -74,9 +39,10 @@ def main():
         days = [x for x in os.listdir('/home/bjs66/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
         for d in days:
             createCondorFile(run,d)
-            cmd = 'condor_submit /home/bjs66/CondorFiles/Convert-%s-%s.condor'%(mainDir,run,d)
-            os.system(cmd)
-            tm.sleep(1)
+            cmd = 'qsub /nfs_home/bjo/GitHub/csi-analysis/_convertDataToHDF5.py %s %s %s'(mainDir,run,d)
+            print cmd
+            #os.system(cmd)
+            #tm.sleep(1)
 
 if __name__ == '__main__':
     main()
