@@ -17,6 +17,7 @@ def main():
 #    runDirs = ['Run-17-02-08-16-39-02']
 #    runDirs = ['Run-15-06-25-12-53-44']
     runDirs = ['Run-15-08-18-14-51-18']
+#    runDirs = ['Run-15-10-29-15-56-36']
 #    runDirs = ['Run-15-06-25-12-53-44','Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01'] 
 #    runDirs = ['Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09']
@@ -57,8 +58,10 @@ def main():
 	    tm.sleep(1.0)
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
-            for currentFileNumber in range(1): #range(len(tList)):
-	    	cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/hcdata-qsub.sh -v analysisMode="1",dataDir="%s",processNumber="%d",outDir="%s"'%(dataRunDir, currentFileNumber, outDir)
-	        os.system(cmd)
+            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/hcdata-qsub.sh -v analysisMode="1",dataDir="%s",outDir="%s"'%(len(tList), dataRunDir, outDir)
+	    #for currentFileNumber in range(len(tList)):
+	    #	cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/hcdata-qsub.sh -v analysisMode="1",dataDir="%s",processNumber="%d",outDir="%s"'%(dataRunDir, currentFileNumber, outDir)
+	    os.system(cmd)
+#	    print cmd
 if __name__ == "__main__":
     main()
