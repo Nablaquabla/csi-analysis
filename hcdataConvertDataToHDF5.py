@@ -39,7 +39,7 @@ def main():
     for run in runDirs:
         days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
         for d in days:
-            cmd = 'qsub /nfs_home/bjo/GitHub/csi-analysis/_convertDataToHDF5.py %s %s %s'%(mainDir,run,d)
+            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubConvertDataToHDF5.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,d)
             print cmd
             #os.system(cmd)
             #tm.sleep(1)
