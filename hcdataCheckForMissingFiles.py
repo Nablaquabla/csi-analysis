@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import time as tm
 import sys
