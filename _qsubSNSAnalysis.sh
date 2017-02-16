@@ -9,7 +9,4 @@ if [ $specificTime == "1" ]; then
 else
   let fileNumber=PBS_ARRAYID-1
 fi
-echo $fileNumber
-echo $analysisMode
-echo $dataDir
-#/nfs_home/bjo/GitHub/csi-analysis/csi-analysis $analysisMode $dataDir $fileNumber $outDir $specificTime
+/nfs_home/bjo/GitHub/csi-analysis/csi-analysis $analysisMode $dataDir $fileNumber $outDir $specificTime

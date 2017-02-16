@@ -61,9 +61,7 @@ def main():
             
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
-            m = '164112'
-            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="1",time="%s"'%(dataRunDir, outDir, m)
-            #cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
+            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
             os.system(cmd)
 if __name__ == "__main__":
     main()

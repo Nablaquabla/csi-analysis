@@ -4,7 +4,7 @@ import sys
 
 # Main function handling all internals
 # -----------------------------------------------------------------------------
-def main(runMissing):       
+def main(showMissing,runMissing):       
     # Choose main directory, i.e. ~/csi/beam_on_data/Run-15-06-25-xyz/
     mainRunDir = '/data2/coherent/data/csi/'
     
@@ -68,15 +68,13 @@ def main(runMissing):
                 missing = list((missingB | missingS) | missingI)
                 if len(missing) > 0: 
                     print len(missing)
-                    for m in missing:
-                        print m
+                    if showMissing == '1':
+                        for m in missing:
+                            print m
                 if runMissing == '1':
                     for m in missing:
                         cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="1",time="%s"'%(dataRunDir, outDir, m)
-                        #os.system(cmd)
-                        print cmd
-		#for m in missing:
-		#	print m
+                        os.system(cmd)
              
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -87,7 +85,7 @@ if __name__ == '__main__':
         runMissing = sys.argv[2]
     else:
         runMissing = 0
-    main()
+    main(showMissing,runMissing)
 
     
 
