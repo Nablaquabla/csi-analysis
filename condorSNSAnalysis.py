@@ -9,7 +9,7 @@ def createCondorFile(dataDir,outDir,run,day,times):
     with open('/home/bjs66/CondorFiles/%s-%s.condor'%(run,day),'w') as f:
         
         # Fixed program location'
-        f.write('Executable = /home/bjs66/GitHub/csi-analysis/csi-analysis\n')
+        f.write('Executable = /home/bjs66/GitHub/csi-analysis/condorCsIAnalysis\n')
         
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002

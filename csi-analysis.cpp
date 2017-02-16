@@ -258,7 +258,7 @@ class waveform
 		void updateIntegratedCsIPeaks(infoData &cInData)
 		{
 			// Only analyze if there has been a peak identified in the trace
-			if (peakBegin.size() > 0)
+			if (peakBegin.size() > 0 && !overflowFlag && !linearGateFlag)
 			{
 				// Go through all peaks
 				for (std::vector<int>::size_type idx = 0; idx < peakBegin.size(); idx++)
@@ -284,7 +284,7 @@ class waveform
 		void lbl_updateIntegratedCsIPeaks(infoData &cInData)
 		{
 			// Only analyze if there has been a peak identified in the trace
-			if (peakBegin.size() > 0)
+			if (peakBegin.size() > 0 && !overflowFlag && !linearGateFlag)
 			{
 				// Go through all peaks
 				for (std::vector<int>::size_type idx = 0; idx < peakBegin.size(); idx++)
@@ -326,7 +326,7 @@ class waveform
 		void cmf_updateIntegratedCsIPeaks(infoData &cInData)
 		{
 			// Only analyze if there has been a peak identified in the trace
-			if (cmf_peakBegin.size() > 0)
+			if (cmf_peakBegin.size() > 0 && !overflowFlag && !linearGateFlag)
 			{
 				// Go through all peaks
 				for (std::vector<int>::size_type idx = 0; idx < cmf_peakBegin.size(); idx++)
