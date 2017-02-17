@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import os
 import time as tm
+import sys
 
 # Main function handling all internals
 # -----------------------------------------------------------------------------
-def main():       
+def main(specificDay):       
     # Choose main directory, i.e. ~/csi/beam_on_data/Run-15-06-25-xyz/
     mainRunDir = '/data2/coherent/data/csi/'
     
@@ -48,7 +49,12 @@ def main():
                 days_in[run] = [x for x in os.listdir(mainRunDir + psd + '/' + run) if 'Settings' not in x]
             
     for run in runDirs:
-        # Iterate through all days in a given run folder, create a condor file and run it.                
+        # Iterate through all days in a given run folder, create a condor file and run it.
+        if specificDay != 'None':
+            if specificDay in days_in[run]: 
+                days_in[run] = [specificDay]
+            else:
+                days_in[run] = []          
         for day in days_in[run]:
             # Prepare paths for further processing
             dataRunDir = mainRunDir + '%s/%s/%s'%(subdirs[run],run,day)
@@ -64,6 +70,10 @@ def main():
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
             cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
+#            print cmd
             os.system(cmd)
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    else:
+        main('None')
