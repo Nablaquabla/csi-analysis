@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import time as tm
 import sys
@@ -39,7 +40,7 @@ def createCondorFile(dataDir,outDir,run,day,time):
         
 # Main function handling all internals
 # -----------------------------------------------------------------------------
-def main(runMissing):       
+def main(showMissing,runMissing):       
    # Choose main directory, i.e. ~/csi/beam_on_data/Run-15-06-25-xyz/
     mainRunDir = '/var/phy/project/phil/grayson/COHERENT/CsI/'
     
@@ -47,14 +48,14 @@ def main(runMissing):
     mainOutDir = '/var/phy/project/phil/grayson/COHERENT/CsI/bjs-analysis/'
 
     # Choose run to analyze
-    runDirs = ['Run-15-06-25-12-53-44']
+#    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-06-25-12-53-44','Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01'] 
 #    runDirs = ['Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09']
 #    runDirs = ['Run-15-10-21-13-12-27','Run-15-10-29-15-56-36','Run-15-11-09-11-30-13']
 #    runDirs = ['Run-15-11-20-11-34-48','Run-15-11-24-15-35-32','Run-15-12-14-11-21-45']
 #    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36','Run-16-02-02-16-26-26']
-#    runDirs = ['Run-16-02-15-13-46-34','Run-16-02-29-11-54-20','Run-16-03-09-13-00-14']
+    runDirs = ['Run-16-02-15-13-46-34','Run-16-02-29-11-54-20','Run-16-03-09-13-00-14']
 #    runDirs = ['Run-16-03-22-18-09-33','Run-16-03-30-12-44-57','Run-16-04-12-11-54-27']
 #    runDirs = ['Run-16-04-20-11-22-48','Run-16-05-05-14-08-52','Run-16-05-12-14-07-59']
 #    runDirs = ['Run-16-05-17-14-40-34','Run-16-06-02-12-35-56','Run-16-06-17-12-09-12']
@@ -103,8 +104,9 @@ def main(runMissing):
                 missing = list((missingB | missingS) | missingI)
                 if len(missing) > 0: 
                     print len(missing)
-                    for m in missing:
-                        print m
+                    if showMissing == '1':
+                        for m in missing:
+                            print m
                 if runMissing == '1':
                     for m in missing:
                         createCondorFile(dataRunDir,outDir,run,day,m)
@@ -122,7 +124,7 @@ if __name__ == '__main__':
         runMissing = sys.argv[2]
     else:
         runMissing = 0
-    main()
+    main(showMissing,runMissing)
 
     
 
