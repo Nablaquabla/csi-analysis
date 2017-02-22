@@ -240,7 +240,8 @@ def main(argv):
                     _tdata[0] = ct(_tdata[0])
 
                     # Split data into triggers with and without events
-                    noEventsInROI = (_tdata[10] == -1)
+#                    noEventsInROI = (_tdata[10] == -1) # 10 = Arrival Time - I.e. there was no event
+                    noEventsInROI = np.asarray((_tdata[9] <= 3) * (_tdata[11]<1400),dtype=bool) # Cut events with less than 4 peaks in IW and a charge below 1400 ADU (SPE charge ~70)
                     eventsInROI = np.logical_not(noEventsInROI)
 
                     triggersWithoutEvents = _tdata[0][noEventsInROI]
