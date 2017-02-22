@@ -102,10 +102,10 @@ def main(argv):
     for tm in times:
         tCurrent = eastern.localize(datetime.datetime(2015,1,1,int(tm[:2]),int(tm[2:4]),int(tm[4:6])))
         deltaT = (tCurrent - currentHour).total_seconds()
-        if deltaT <= 1800.0:
+        if deltaT <= 300.0:
             _tmpSubT.append(tm)
         else:
-            if (tLast - tCurrent).total_seconds() <= 2700.0:
+            if (tLast - tCurrent).total_seconds() < 600.0:
                 _tmpSubT.append(tm)
             else:
                 subTimeArray.append(_tmpSubT)
