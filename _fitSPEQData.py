@@ -89,8 +89,8 @@ def main(args):
             speQArr['Times'].append(sSE)
 
             # Prepare fit data
-            xQ = np.arange(-50,249)
-            yQ = h5In['/I/%s/speChargeDist'%time][...]
+            xQ = np.arange(-50,250)
+            yQ = h5In['/I/%s/peakCharge/lbl'%time][...]
 
             # If not enough SPE have been found use previous data point
             if np.sum(yQ) > 1e3:
