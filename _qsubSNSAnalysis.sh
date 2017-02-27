@@ -1,12 +1,7 @@
 #!/bin/bash
-#PBS -o /data2/coherent/data/csi/bjs-analysis/Logs/Run.log
-#PBS -e /data2/coherent/data/csi/bjs-analysis/Errs/Run.err
+#PBS -o /dev/null
+#PBS -e /dev/null
 #PBS -l nodes=1:ppn=1
-#PBS -l walltime=00:01:00
+#PBS -l walltime=00:10:00
 #PBS -l mem=400mb
-if [ $specificTime == "1" ]; then
-  fileNumber=$time
-else
-  let fileNumber=PBS_ARRAYID-1
-fi
-/nfs_home/bjo/GitHub/csi-analysis/hcdataCsIAnalysis $analysisMode $dataDir $fileNumber $outDir $specificTime
+/nfs_home/bjo/GitHib/csi-analysis/_hcdataCsIAnalysis.py $analysisMode $dataDir $fileNumber $outDir $specificTime $time
