@@ -36,7 +36,7 @@ def main(argv):
         if '/%s/beam-power'%wd in f:
             del f['/%s/beam-power'%wd]
 
-        if '/%s/no-event-beam-power'%wd:
+        if '/%s/no-event-beam-power'%wd in f:
             del f['/%s/no-event-beam-power'%wd]
 
         # Get all event timestamps and truncate them to the second

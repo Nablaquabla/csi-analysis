@@ -11,16 +11,16 @@ def createCondorFile(run,day):
 
         # Define dirs used on Condor
         mainDataDir = '/home/bjs66/csi/bjs-analysis/'
-        beamPowerDir = '/home/bjs66/csi/bjs-analysis/BeamPowerHistory.h5'
+        beamPowerDir = '/home/bjs66/csi/bjs-analysis/BeamPowerHistory/'
 
         # Fixed program location'
-        f.write('Executable = _determineBeamStatus.py\n') #/home/bjs66/anaconda2/bin/python2.7\n')
+        f.write('Executable = /home/bjs66/GitHub/csi-analysis/_determineBeamStatus.py\n') #/home/bjs66/anaconda2/bin/python2.7\n')
 
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
 	    # Set current time to be analzyed (w/o .zip extension!), e.g. 184502
 	    # Set output directory, eg Output/ Run-15-10-02-27-32-23/151002
-        f.write('Arguments = \"%s %s\"\n'%(run,day,mainDataDir,beamPowerDir))
+        f.write('Arguments = \"%s %s %s %s\"\n'%(run,day,mainDataDir,beamPowerDir))
 
         # Standard cluster universe
         f.write('universe   = vanilla\n')
@@ -66,7 +66,7 @@ def main():
         for d in days:
             if True:
                 createCondorFile(run,d)
-                cmd = 'condor_submit /home/bjs66/CondorFiles/CheckBP-%s-%s.condor'%(run,d)
+                cmd = 'condor_submit /home/bjs66/CondorFiles/DetermineBeamStatus-%s-%s.condor'%(run,d)
                 os.system(cmd)
                 tm.sleep(1)
 
