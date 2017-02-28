@@ -40,8 +40,8 @@ def main(argv):
             del f['/%s/no-event-beam-power'%wd]
 
         # Get all event timestamps and truncate them to the second
-        evtTS = f['/%s/timestamp'%wd][...].astype(np.uint32)
-        noEvtTS = f['/%s/no-event'%wd][...].astype(np.uint32)
+        evtTS = np.asarray(np.ceil(f['/%s/timestamp'%wd][...]),dtype=np.uint32)
+        noEvtTS = np.asarray(np.ceil(f['/%s/no-event'%wd][...]),dtype=np.uint32)
 
         # Array to store beam-on flags
         beamPowerWithEvent = []
@@ -49,11 +49,11 @@ def main(argv):
 
         # Determine power for all triggers w event
         for ets in evtTS:
-            beamPowerWithEvent.append(powerData[np.where(ets == evtTS)])
+            beamPowerWithEvent.append(powerData[np.where(ets == timeData)])
 
         # Determine power for all triggers w/o event
         for nets in noEvtTS:
-            beamPowerWithoutEvent.append(powerData[np.where(nets == noEvtTS)])
+            beamPowerWithoutEvent.append(powerData[np.where(nets == timeData)])
 
         # Write beam on flag to HDF5 file
         f.create_dataset('/%s/beam-power'%wd,data=beamPowerWithEvent,dtype=np.float)
