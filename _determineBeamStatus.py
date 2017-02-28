@@ -48,22 +48,12 @@ def main(argv):
         beamPowerWithoutEvent = []
 
         # Determine power for all triggers w event
-        tIdx = 0
         for ets in evtTS:
-            if ets == timeData[tIdx]:
-                beamPowerWithEvent.append(powerData[tIdx])
-            else:
-                while timeData[tIdx] < ets:
-                    tIdx += 1
+            beamPowerWithEvent.append(powerData[np.where(ets == evtTS)])
 
         # Determine power for all triggers w/o event
-        tIdx = 0
         for nets in noEvtTS:
-            if nets == timeData[tIdx]:
-                beamPowerWithoutEvent.append(powerData[tIdx])
-            else:
-                while timeData[tIdx] < nets:
-                    tIdx += 1
+            beamPowerWithoutEvent.append(powerData[np.where(nets == noEvtTS)])
 
         # Write beam on flag to HDF5 file
         f.create_dataset('/%s/beam-power'%wd,data=beamPowerWithEvent,dtype=np.float)
