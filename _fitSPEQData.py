@@ -71,72 +71,74 @@ def main(args):
     for day in daysInRun:
         h5In = h5py.File(runDir + '/' + day + '.h5', 'r+')
 
-        # Prepare/reset output array
-        speQArr = {'Times': [],
-                   'GaussBest': [],
-                   'GaussErr': [],
-                   'PolyaBest': [],
-                   'PolyaErr': []}
+#        for analysisType in ['lbl','vanilla','cmf']:
+        for analysisType in ['vanilla','lbl','cmf']:
+#        for analysisType in ['cmf','vanilla','lbl']:
 
-        # Perform analysis for each hour in day file
-        for time in np.sort(h5In['/I/'].keys()):
+            # Prepare/reset output array
+            speQArr = {'Times': [],
+                       'PolyaBest': [],
+                       'PolyaErr': []}
 
-            # Calculate seconds in epoch based on day and hour
-            eTS = eastern.localize(datetime.datetime.strptime(day+time,'%y%m%d%H%M%S'))
-            uTS = eTS.astimezone(utc)
-            sSE = (uTS - epochBeginning).total_seconds()
+            # Perform analysis for each hour in day file
+            for time in np.sort(h5In['/I/'].keys()):
 
-            speQArr['Times'].append(sSE)
+                # Calculate seconds in epoch based on day and hour
+                eTS = eastern.localize(datetime.datetime.strptime(day+time,'%y%m%d%H%M%S'))
+                uTS = eTS.astimezone(utc)
+                sSE = (uTS - epochBeginning).total_seconds()
 
-            # Prepare fit data
-            xQ = np.arange(-50,250)
-            yQ = h5In['/I/%s/peakCharge/lbl'%time][...]
+                speQArr['Times'].append(sSE)
 
-            # If not enough SPE have been found use previous data point
-            if np.sum(yQ) > 1e3:
-                p0 = [70.0, 6.0, 0.5*np.max(yQ),0.05*np.max(yQ),0,1.0*np.max(yQ),10.0,0.5,20.0,0]
-                lims = [[0,1,0,50,0],[1,1,0,4,0],[2,1,0,0,0],[3,1,0,0,0],[4,1,0,0,0],[5,1,0,0,0],[7,1,0,0,0],[8,1,0,10,0],[9,1,0,0,0]]
+                # Prepare fit data
+                xQ = np.arange(-50,250)
+                yQ = h5In['/I/%s/peakCharge/%s'%(time,analysisType)][...]
 
-                # Scaling to help preventing overflows
-                scaling = 1.0
-                yf = yQ/6.0
+                # If not enough SPE have been found use previous data point
+                if np.sum(yQ) > 1e3:
+                    # Scaling to help preventing overflows
+                    scaling = 1.0
+                    yf = yQ/6.0
 
-                # Data arrays used for bad fit rejection
-                x2 = 1000.0
-                x2Arr = []
-                pArr = []
+                    # Data arrays used for bad fit rejection
+                    x2 = 1000.0
+                    x2Arr = []
+                    pArr = []
 
-                # Prevent fit from exploring negative numbers
-                xMin = 5
-                c = (xQ >= xMin)
+                    # Prevent fit from exploring negative numbers
+                    xMin = xQ[np.argmax(yf > 20)]
+                    c = (xQ >= xMin)
 
-                # Fit data - If a bad fit is encountered, adjust parameters and refit
-                while x2 > 0.5*scaling:
-                    _,pars,xfit,yfit = ef.arbFit(pFit3,xQ[c],yf[c],'Poisson',p0,lims)
-                    x2 = np.sum((pFit3(xQ[c],pars[0]) - yf[c])**2/pFit3(xQ[c],pars[0]))/np.sum(c)
-                    x2Arr.append(x2)
-                    pArr.append(pars)
-                    if x2 < 0.5*scaling and pars[0][1] != 4:
-                        break
-                    if len(x2Arr) > 20:
-                        iMin = np.argmin(x2Arr)
-                        pars = pArr[iMin]
-                        break
-                    p0[7] += 0.1*(0.5-np.random.rand())
-                    p0[8] += (0.5-np.random.rand())
+                    p0 = [70.0, 6.0, np.max(yf),0,0,5.0*np.max(yf),10.0,0.5,20.0,0]
+                    lims = [[0,1,0,50,0],[1,1,0,4,0],[2,1,0,0,0],[3,1,0,0,0],[4,1,0,0,0],[5,1,0,0,0],[7,1,0,0,0],[8,1,0,10,0],[9,1,0,0,0]]
 
-                speQArr['PolyaBest'].append(pars[0][:])
-                speQArr['PolyaErr'].append(pars[2][:])
+                    # Fit data - If a bad fit is encountered, adjust parameters and refit
+                    while x2 > 0.5*scaling:
+                        _,pars,xfit,yfit = ef.arbFit(pFit3,xQ[c],yf[c],'Poisson',p0,lims)
+                        x2 = np.sum((pFit3(xQ[c],pars[0]) - yf[c])**2/pFit3(xQ[c],pars[0]))/np.sum(c)
+                        x2Arr.append(x2)
+                        pArr.append(pars)
+                        if x2 < 0.5*scaling and pars[0][1] != 4:
+                            break
+                        if len(x2Arr) > 20:
+                            iMin = np.argmin(x2Arr)
+                            pars = pArr[iMin]
+                            break
+                        p0[7] += 0.1*(0.5-np.random.rand())
+                        p0[8] += (0.5-np.random.rand())
 
-            else:
-                speQArr['PolyaBest'].append(pars[0][:])
-                speQArr['PolyaErr'].append(pars[2][:])
+                    speQArr['PolyaBest'].append(pars[0][:])
+                    speQArr['PolyaErr'].append(pars[2][:])
 
-        # Write data to HDF5 file replacing already existing data
-        for key in speQArr.keys():
-            if '/SPEQ/%s'%key in h5In:
-                del h5In['/SPEQ/%s'%key]
-            h5In.create_dataset('/SPEQ/%s'%key,data=speQArr[key])
+                else:
+                    speQArr['PolyaBest'].append(pars[0][:])
+                    speQArr['PolyaErr'].append(pars[2][:])
+
+            # Write data to HDF5 file replacing already existing data
+            for key in speQArr.keys():
+                if '/SPEQ/%s/%s'%(analysisType,key) in h5In:
+                    del h5In['/SPEQ/%s/%s'%(analysisType,key)]
+                h5In.create_dataset('/SPEQ/%s/%s'%(analysisType,key),data=speQArr[key])
 
         h5In.close()
 # ============================================================================
