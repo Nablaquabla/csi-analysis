@@ -40,24 +40,70 @@ def main(argv):
             del f['/%s/no-event-beam-power'%wd]
 
         # Get all event timestamps and truncate them to the second
+        # SNS beam opeartors think a timestamp corresponds to the second leading up to the stamp
+        # I.e. timestamp 10 actually covers the second (9,10]
         evtTS = np.asarray(np.ceil(f['/%s/timestamp'%wd][...]),dtype=np.uint32)
         noEvtTS = np.asarray(np.ceil(f['/%s/no-event'%wd][...]),dtype=np.uint32)
 
-        # Array to store beam-on flags
+        # Determine minimum and maximum timestamp
+        tMin = evtTS[0] if noEvtTS[0] > evtTS[0] else noEvtTS[0]
+        tMax = evtTS[-1] if noEvtTS[-1] < evtTS[-1] else noEvtTS[-1]
+
+        # Cut time and beampower array to only contain proper times
+        cut = np.array((timeData >= tMin) * (timeData <= tMax),dtype=bool)
+        cTime = timeData[cut]
+        cPower = powerData[cut]
+
+        # Array to store beam power data
         beamPowerWithEvent = []
         beamPowerWithoutEvent = []
 
+
+#        # Determine power for all triggers w event
+#        for ets in evtTS:
+#            beamPowerWithEvent.append(powerData[np.where(ets == timeData)])
+#
+#        # Determine power for all triggers w/o event
+#        for nets in noEvtTS:
+#            beamPowerWithoutEvent.append(powerData[np.where(nets == timeData)])
+
         # Determine power for all triggers w event
-        for ets in evtTS:
-            beamPowerWithEvent.append(powerData[np.where(ets == timeData)])
+        idx = 0
+        for evt in evtTS:
+            pwr = 0
+            while True:
+                if evt == cTime[idx]:
+                    pwr = cPower[idx]
+                    break
+                else:
+                    if evt > cTime[idx]:
+                        idx += 1
+                        continue
+                    if evt < cTime[idx]:
+                        idx -= 1
+                        continue
+            beamPowerWithEvent.append(pwr)
 
         # Determine power for all triggers w/o event
-        for nets in noEvtTS:
-            beamPowerWithoutEvent.append(powerData[np.where(nets == timeData)])
+        idx = 0
+        for evt in noEvtTS:
+            pwr = 0
+            while True:
+                if evt == cTime[idx]:
+                    pwr = cPower[idx]
+                    break
+                else:
+                    if evt > cTime[idx]:
+                        idx += 1
+                        continue
+                    if evt < cTime[idx]:
+                        idx -= 1
+                        continue
+            beamPowerWithoutEvent.append(pwr)
 
         # Write beam on flag to HDF5 file
         f.create_dataset('/%s/beam-power'%wd,data=beamPowerWithEvent,dtype=np.float)
-        f.create_dataset('/%s/no-event-beam-power'%wd,data=beamPowerWithEvent,dtype=np.float)
+        f.create_dataset('/%s/no-event-beam-power'%wd,data=beamPowerWithoutEvent,dtype=np.float)
 
     f.close()
 
