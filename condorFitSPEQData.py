@@ -10,7 +10,7 @@ def createCondorFile(mainDir,run):
     with open('/home/bjs66/CondorFiles/SPEQ-%s.condor'%run,'w') as f:
 
         # Fixed program location'
-        f.write('Executable = _fitSPEQ.py\n') #/home/bjs66/anaconda2/bin/python2.7\n')
+        f.write('Executable = /home/bjs66/GitHub/csi-analysis/_fitSPEQData.py\n') #/home/bjs66/anaconda2/bin/python2.7\n')
 
         # Arguments passed to the exe:
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
@@ -44,8 +44,8 @@ def main():
     mainDir = '/home/bjs66/csi/bjs-analysis/'
 
     # SNS analysis
-    runDirs = ['Run-15-06-25-12-53-44']
-#    runDirs = ['Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
+#    runDirs = ['Run-15-06-25-12-53-44']
+    runDirs = ['Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01']
 #    runDirs = ['Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09']
 #    runDirs = ['Run-15-10-21-13-12-27','Run-15-10-29-15-56-36','Run-15-11-09-11-30-13']
