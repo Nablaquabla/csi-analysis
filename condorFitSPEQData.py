@@ -5,9 +5,9 @@ import time as tm
 
 # Handles the creation of condor files for a given set of directories
 # -----------------------------------------------------------------------------
-def createCondorFile(mainDir,run):
+def createCondorFile(mainDir,run,day):
     # Condor submission file name convention: run-day-time.condor
-    with open('/home/bjs66/CondorFiles/SPEQ-%s.condor'%run,'w') as f:
+    with open('/home/bjs66/CondorFiles/SPEQ-%s-%s.condor'%(run,day),'w') as f:
 
         # Fixed program location'
         f.write('Executable = /home/bjs66/GitHub/csi-analysis/_fitSPEQData.py\n') #/home/bjs66/anaconda2/bin/python2.7\n')
@@ -16,7 +16,7 @@ def createCondorFile(mainDir,run):
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
 	    # Set current time to be analzyed (w/o .zip extension!), e.g. 184502
 	    # Set output directory, eg Output/ Run-15-10-02-27-32-23/151002
-        f.write('Arguments = \"%s %s\"\n'%(mainDir,run))
+        f.write('Arguments = \"%s %s %s\"\n'%(mainDir,run,day))
 
         # Standard cluster universe
         f.write('universe   = vanilla\n')
@@ -26,9 +26,9 @@ def createCondorFile(mainDir,run):
         f.write('request_memory = 300\n')
 
         # Output, error and log name convention: run-day-time.log/out/err
-        f.write('log = /home/bjs66/Logs/SPEQ-%s.log\n'%run)
-        f.write('Output = /home/bjs66/Outs/SPEQ-%s.out\n'%run)
-        f.write('Error = /home/bjs66/Errs/SPEQ-%s.err\n'%run)
+        f.write('log = /home/bjs66/Logs/SPEQ-%s-%s.log\n'%(run,day))
+        f.write('Output = /home/bjs66/Outs/SPEQ-%s-%s.out\n'%(run,day))
+        f.write('Error = /home/bjs66/Errs/SPEQ-%s-%s.err\n'%(run,day))
 
         # Do not write any emails
         f.write('notification = never\n')
@@ -44,7 +44,7 @@ def main():
     mainDir = '/home/bjs66/csi/bjs-analysis/'
 
     # SNS analysis
-#    runDirs = ['Run-15-06-25-12-53-44']
+    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01']
 #    runDirs = ['Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09']
@@ -54,7 +54,7 @@ def main():
 #    runDirs = ['Run-16-02-15-13-46-34','Run-16-02-29-11-54-20','Run-16-03-09-13-00-14']
 #    runDirs = ['Run-16-03-22-18-09-33','Run-16-03-30-12-44-57','Run-16-04-12-11-54-27']
 #    runDirs = ['Run-16-04-20-11-22-48','Run-16-05-05-14-08-52','Run-16-05-12-14-07-59']
-    runDirs = ['Run-16-05-17-14-40-34','Run-16-06-02-12-35-56','Run-16-06-17-12-09-12']
+#    runDirs = ['Run-16-05-17-14-40-34','Run-16-06-02-12-35-56','Run-16-06-17-12-09-12']
 #    runDirs = ['Run-16-06-27-17-50-08','Run-16-07-06-18-25-19','Run-16-07-12-11-44-55']
 #    runDirs = ['Run-16-07-18-11-50-24','Run-16-07-21-11-59-39','Run-16-07-28-12-49-17']
 #    runDirs = ['Run-16-01-07-12-16-36']
@@ -67,10 +67,12 @@ def main():
 #    runDirs = ['Run-15-03-27-12-42-26']
 
     for run in runDirs:
-        createCondorFile(mainDir,run)
-        cmd = 'condor_submit /home/bjs66/CondorFiles/SPEQ-%s.condor'%run
-        os.system(cmd)
-        tm.sleep(1)
+        days = [x.split('.')[0] for x in os.listdir('/home/bjs66/csi/bjs-analysis/%s/'%run) if '.h5' in x]
+        for d in days:
+            createCondorFile(mainDir,run)
+            cmd = 'condor_submit /home/bjs66/CondorFiles/SPEQ-%s-%s.condor'%(run,day)
+            os.system(cmd)
+            tm.sleep(1)
 
 if __name__ == '__main__':
     main()
