@@ -69,8 +69,8 @@ def main():
     for run in runDirs:
         days = [x.split('.')[0] for x in os.listdir('/home/bjs66/csi/bjs-analysis/%s/'%run) if '.h5' in x]
         for d in days:
-            createCondorFile(mainDir,run)
-            cmd = 'condor_submit /home/bjs66/CondorFiles/SPEQ-%s-%s.condor'%(run,day)
+            createCondorFile(mainDir,run,d)
+            cmd = 'condor_submit /home/bjs66/CondorFiles/SPEQ-%s-%s.condor'%(run,d)
             os.system(cmd)
             tm.sleep(1)
 
