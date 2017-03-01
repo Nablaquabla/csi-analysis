@@ -18,7 +18,6 @@ def main(args):
     run = args[2]
 
     # Declare main and run dirs
-    mainDir =
     runDir = mainDir + run
 
     # Get all days in given run folder
@@ -47,15 +46,17 @@ def main(args):
             if qSize == 0:
                 qIdxUpdate = False
             # For each event get the timestamp and charge. Get the correct SPEQ and convert the charge to NPE
-            for q,t in zip(charge,times):
+            for t in times:
                 if qIdxUpdate:
                     if t >= speCharges['Time'][qIdx+1]:
                         qIdx += 1
                     if qIdx >= qSize:
                         qIdxUpdate = False
                 speQIdxArray.append(qIdx)
-
-            h5In.create_dataset('/%s/speQindex'%wd, data=speQIdxArray)
+            h5key = '/%s/speQindex'%wd
+            if h5key in h5In:
+                del h5In[h5key]
+            h5In.create_dataset(h5key, data=speQIdxArray)
 
         h5In.close()
 

@@ -13,9 +13,31 @@ def main(argv):
 
     if len(h5Days) != len(totalDays):
         print 'HDF5 files missing ...'
-
+    
+    print '\n--------------------------------------------------------'
+    print '\tAnalyzing ', run
+    print '--------------------------------------------------------'
+    print 'Day\t\tPower\tSPEQ Charge\tSPEQ Index'
+    print '---------\t-----\t-----------\t----------'
     for d in h5Days:
-        print d
+        f = h5py.File(mainDir + run + '/' + d, 'r')
+        snsPower1 = ('/B/beam-power' in f)# and len(f['/B/beam-power'])>0
+        snsPower2 = ('/S/beam-power' in f)# and len(f['/S/beam-power'])>0
+        snsPower3 = ('/B/no-event-beam-power' in f)# and len(f['/B/no-event-beam-power'])>0
+        snsPower4 = ('/S/no-event-beam-power' in f)# and len(f['/S/no-event-beam-power'])>0
+        powerStatus = 'good' if (snsPower1 and snsPower2 and snsPower3 and snsPower4) else '-'
+
+        vanillaSPEQ = ('/SPEQ/vanilla' in f)# and len(f['/SPEQ/vanilla/Times'])>0
+        lblSPEQ = ('/SPEQ/lbl' in f)# and len(f['/SPEQ/lbl/Times'])>0
+        cmfSPEQ = ('/SPEQ/cmf' in f)# and len(f['/SPEQ/cmf/Times'])>0
+        speqStatus = 'good' if (vanillaSPEQ and lblSPEQ and cmfSPEQ) else '-'
+
+        bQIndex = ('/B/speQindex' in f)# and len(f['/B/speQindex'])>0
+        sQIndex = ('/S/speQindex' in f)# and len(f['/S/speQindex'])>0
+        indexStatus = 'good' if (bQIndex  and sQIndex) else '-'
+        print '%s\t%s\t   %s\t\t  %s'%(d, powerStatus, speqStatus, indexStatus)
+
+    print ''
 #    # Open HDF5 file
 #    f = h5py.File(dataDir + run + '/' + d + '.h5', 'r+')
 #    f.close()
@@ -25,7 +47,7 @@ def main(argv):
 # ============================================================================
 if __name__ == '__main__':
     mDir = '/home/bjs66/csi/bjs-analysis/'
-    runDirs = ['Run-15-06-25-12-53-44']
+#    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-06-26-11-23-13','Run-15-07-31-18-30-14']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01']
 #    runDirs = ['Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09']
@@ -39,5 +61,6 @@ if __name__ == '__main__':
 #    runDirs = ['Run-16-06-27-17-50-08','Run-16-07-06-18-25-19','Run-16-07-12-11-44-55']
 #    runDirs = ['Run-16-07-18-11-50-24','Run-16-07-21-11-59-39','Run-16-07-28-12-49-17']
 #    runDirs = ['Run-16-01-07-12-16-36']
+    runDirs = ['Run-16-08-04-17-23-52','Run-16-08-09-00-29-54','Run-16-08-16-00-22-26']
     for run in runDirs:
-        main(mDir,run)
+        main(['',mDir,run])
