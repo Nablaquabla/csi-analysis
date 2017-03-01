@@ -124,7 +124,7 @@ def main(args):
                             iMin = np.argmin(x2Arr)
                             pars = pArr[iMin]
                             break
-                        print time
+                        print day, time
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
 
