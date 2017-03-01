@@ -113,7 +113,7 @@ def main(args):
                     lims = [[0,1,1,50,100],[1,1,1,4.75,6.75],[2,1,0,0,0],[3,1,1,0,40],[4,1,1,0,0.3],[5,1,0,0,0],[7,1,1,0,20],[8,1,1,10,25]]
 
                     # Fit data - If a bad fit is encountered, adjust parameters and refit
-                    while x2 > 0.5*scaling:
+                    while x2 > 0.55*scaling:
                         _,pars,xfit,yfit = ef.arbFit(pFit3,xQ[c],yf[c],'Poisson',p0,lims)
                         x2 = np.sum((pFit3(xQ[c],pars[0]) - yf[c])**2/pFit3(xQ[c],pars[0]))/np.sum(c)
                         x2Arr.append(x2)
