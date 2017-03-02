@@ -235,6 +235,10 @@ def main(argv):
                     _tdata = np.loadtxt('%s/%s/%s/%s-%s'%(mainDir,run,d,w,t)).T
                     if np.isscalar(_tdata[0]):
                         _tdata = np.array([np.array([x]) for x in _tdata])
+                    
+                    cut = np.logical_not(_tdata[0] == '0000000000000')
+                    for i in range(len(_tdata)):
+                        _tdata[i] = _tdata[i][cut]
 
                     # Convert timestamps to seconds since epoch (UTC)
                     _tdata[0] = ct(_tdata[0])

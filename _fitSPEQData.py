@@ -63,7 +63,7 @@ def main(args):
     runDir = mainDir + run
 
     # Create dummy pars variables
-    pars = np.zeros((3,10))
+    pars = np.zeros((3,9))
 
     # For the given day read the HDF5 file and fit SPEQ spectra
     h5In = h5py.File(runDir + '/' + day + '.h5', 'r+')
@@ -77,14 +77,17 @@ def main(args):
     # Analyze all available SPEQ distribution types
     for analysisType in ['vanilla','lbl','cmf']:
 
+#    for analysisType in ['cmf']:
+
         # Prepare/reset output array
         speQArr = {'Times': [],
                    'PolyaBest': [],
                    'PolyaErr': []}
 
         # Perform analysis for each hour in day file
-        for time in np.sort(h5In['/I/'].keys()):
+        for time in np.sort(h5In['/I'].keys())[:]:
 
+#            print analysisType,time
             # Calculate seconds in epoch based on day and hour
             eTS = eastern.localize(datetime.datetime.strptime(day+time,'%y%m%d%H%M%S'))
             uTS = eTS.astimezone(utc)
@@ -94,9 +97,9 @@ def main(args):
             # Prepare fit data
             xQ = np.arange(-50,250)
             yQ = h5In['/I/%s/peakCharge/%s'%(time,analysisType)][...]
-
+            
             # If not enough SPE have been found use previous data point
-            if np.sum(yQ) > 1e3:
+            if np.sum(yQ) > 1e3 and np.max(yQ) < 12500:
 
                 # Scaling to help preventing overflows
                 scaling = 1.0
@@ -109,15 +112,21 @@ def main(args):
                 pArr = []
 
                 # Prevent fit from exploring negative numbers
-                xMin = xQ[np.argmax(yf > 20)]
+                xMin = xQ[np.argmax(yf > 100)]
+                if xMin < 12: xMin =12
                 c = (xQ >= xMin)
 
                 # Prepare initial fit parameter estimates and set fit limits
-                p0 = [70.0, 6.0, 500, 10, 0.002, 5e4, 10.0, 0.5 , 17.0]
-                lims = [[0,1,1,50,100],[1,1,1,4.75,6.75],[2,1,0,0,0],[3,1,1,0,40],[4,1,1,0,0.3],[5,1,0,0,0],[7,1,1,0,20],[8,1,1,10,25]]
+                if analysisType == 'cmf': 
+                    p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
+                    widthMinimum = 4.2
+                else:
+                    p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
+                    widthMinimum = 4.75
+                lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,40],[4,1,1,0,0.3],[5,1,0,0,0],[6,1,1,4,20],[7,1,1,0,20],[8,1,1,10,25]]
 
                 # Fit data - If a bad fit is encountered, adjust parameters and refit
-                while (x2 > 0.55*scaling or fitWidth == 4.0):
+                while (x2 > 0.55*scaling or fitWidth == widthMinimum):
 
                     # Fit data
                     _,pars,xfit,yfit = ef.arbFit(pFit3,xQ[c],yf[c],'Poisson',p0,lims)
@@ -129,7 +138,7 @@ def main(args):
 
                     # Check if fit was good => Break
                     fitWidth = pars[0][1]
-                    if x2 < 0.55*scaling and fitWidth != 4.0:
+                    if x2 < 0.55*scaling and fitWidth != widthMinimum:
                         break
 
                     # If fit wasn't good, but there were already 20 fits made get the one with the lowest red. x2 and add to fit results
@@ -151,13 +160,16 @@ def main(args):
                 speQArr['PolyaErr'].append(pars[2][:])
 
             # Write data to HDF5 file
-                h5In.create_dataset('/SPEQ/%s/%s'%(analysisType,key),data=speQArr[key])
+        for key in speQArr.keys():
+            h5In.create_dataset('/SPEQ/%s/%s'%(analysisType,key),data=speQArr[key])
 
-        h5In.close()
+    h5In.close()
 # ============================================================================
 #                                Run program
 # ============================================================================
 if __name__ == '__main__':
+#    args = ['', '/home/bjs66/csi/bjs-analysis/','Run-15-06-26-11-23-13','150711']
+#    main(args)
     main(sys.argv)
 
 
