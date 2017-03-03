@@ -43,6 +43,12 @@ def main(argv):
                 powerPerBin[qIdx] += p
             print np.sum(powerPerBin) / 60.0 / 60.0 / 60.0 / 1000.0 / 1000.0
 
+            eventTimeIndex= h5In['/%s/speQindex'%wd][...]
+            eventBeamPower = h5In['/%s/beam-power'%wd][...]
+
+            for qIdx,p in zip(eventTimeIndex,eventBeamPower):
+                powerPerBin[qIdx] += p
+            print np.sum(powerPerBin) / 60.0 / 60.0 / 60.0 / 1000.0 / 1000.0
 # ============================================================================
 #                                Run program
 # ============================================================================
