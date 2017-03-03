@@ -41,7 +41,7 @@ def main(argv):
                     if qIdx >= qSize:
                         qIdxUpdate = False
                 powerPerBin[qIdx] += p
-           print powerPerBin
+            print np.sum(powerPerBin) / 60.0 / 60.0 / 60.0 / 1000.0 / 1000.0
 
 # ============================================================================
 #                                Run program
