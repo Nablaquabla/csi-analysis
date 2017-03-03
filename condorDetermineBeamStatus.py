@@ -60,10 +60,10 @@ def main():
 #    runDirs = ['Run-16-06-27-17-50-08','Run-16-07-06-18-25-19','Run-16-07-12-11-44-55']
 #    runDirs = ['Run-16-07-18-11-50-24','Run-16-07-21-11-59-39','Run-16-07-28-12-49-17']
 #    runDirs = ['Run-16-08-04-17-23-52','Run-16-08-09-00-29-54','Run-16-08-16-00-22-26']
-    runDirs = ['Run-16-06-02-12-35-56']
+    runDirs = ['Run-16-04-20-11-22-48']
     for run in runDirs:
 #        days = [x.split('.')[0] for x in os.listdir('/home/bjs66/csi/bjs-analysis/%s/'%run) if '.h5' in x]
-        days = ['160612']
+        days = ['160429']
         for d in days:
             if True:
                 createCondorFile(run,d)
