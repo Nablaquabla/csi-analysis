@@ -24,7 +24,7 @@ def main(argv):
         # Open current hdf5 file
         h5In = h5py.File(mainDir + run + '/' + day, 'r')
         timeBins = h5In['/SPEQ/vanilla/Times'][...]
-        timeBinsHumanReadable = np.sort(['/I/'].keys())
+        timeBinsHumanReadable = np.sort(h5In['/I'].keys())
         for i in range(len(timeBins)):
             currentTimeGroup = h5Out.create_group('/%s/%s/%s'%(run,d,timeBinsHumanReadable[i]))
             for analysisType in ['vanilla','lbl','cmf']:
