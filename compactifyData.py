@@ -96,8 +96,9 @@ def main(argv):
                 currentWindowGroup.attrs.create('vanilla-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)]) / np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
                 currentWindowGroup.attrs.create('cmf-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
 
-                cut = h5In['/%s/speQindex'%wd][...] == i
+                cut = (h5In['/%s/speQindex'%wd][...] == i) * np.array((h5In['/%s/cmf-iw-peaks'%wd][...] >= 6) + (h5In['/%s/vanilla-iw-peaks'%wd][...] >= 6),dtype=bool)
                 for dK in dataKeys:
+                    print dK
                     currentWindowGroup.create_dataset(dK,h5In['/%s/%s'%(wd,dK)][...][cut])
 
         h5In.close()
