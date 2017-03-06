@@ -14,7 +14,7 @@ def main(argv):
     run = argv[2]
 
     # Create/open stability HDF5 file that contains all stability data
-    h5Out = h5py.File(mainDir + '/Metadata/Final-Data.h5'%run,'w')
+    h5Out = h5py.File(mainDir + '/Metadata/Final-Data.h5','w')
 
     # Determine all days in run folder that need to be analyzed
     h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
@@ -38,6 +38,7 @@ def main(argv):
         # Get total number of triggers for Signal and Background regions
         # and determine total power delivered in 10 minute windows
         for wd in ['S','B']:
+            print 'Current window: ',wd
             noEventsTimeStamps = h5In['/%s/no-event'%wd][...]
             noEventBeamPower = h5In['/%s/no-event-beam-power'%wd][...]
 
