@@ -78,7 +78,7 @@ def main(argv):
             for i in range(len(timeBins)):
                 currentTimeGroup = h5Out['/%s/%s/%s'%(run,d,timeBinsHumanReadable[i])]
                 currentWindowGroup = currentTimeGroup.create_group('%s'%wd)
-                currentWindowGroup.attrs['triggers-with-power'] = numberOfTriggers['with-power'][i]
+                currentWindowGroup.attrs.create('triggers-with-power',numberOfTriggers['with-power'][i],dtype=np.uint32)
                 currentWindowGroup.attrs['triggers-without-power'] = numberOfTriggers['without-power'][i]
                 currentWindowGroup.attrs['triggers-with-bad-power'] = numberOfTriggers['bad-power'][i]
                 currentWindowGroup.attrs['total-triggers'] = numberOfTriggers['total'][i]
