@@ -34,11 +34,12 @@ def main(argv):
             qSize = len(timeBins) - 1
             qIdxUpdate = True
             powerPerBin = np.zeros(len(timeBins))
-            numberOfTriggers = {'with-power': 0, 'without-power': 0, 'bad-power': 0}
+            numberOfTriggers = {'with-power': 0, 'without-power': 0, 'bad-power': 0, 'total': 0}
             if qSize == 0:
                 qIdxUpdate = False
 
             # Add beam power to the proper time bins
+            numberOfTriggers['total'] += len(noEventBeamPower)
             for t,p in zip(noEventsTimeStamps,noEventBeamPower):
                 if qIdxUpdate:
                     if t >= timeBins[qIdx+1]:
@@ -56,6 +57,7 @@ def main(argv):
             eventTimeIndex= h5In['/%s/speQindex'%wd][...]
             eventBeamPower = h5In['/%s/beam-power'%wd][...]
 
+            numberOfTriggers['total'] += len(eventBeamPower)
             for qIdx,p in zip(eventTimeIndex,eventBeamPower):
                 if p > 0:
                     numberOfTriggers['with-power'] += 1
@@ -64,7 +66,7 @@ def main(argv):
                     numberOfTriggers['without-power'] += 1
                 else:
                     numberOfTriggers['bad-power'] += 1
-
+        print powerPerBin
         print numberOfTriggers
 # ============================================================================
 #                                Run program
