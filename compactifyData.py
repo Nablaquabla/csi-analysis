@@ -9,19 +9,24 @@ def main(argv):
     run = argv[2]
 
     # Create/open stability HDF5 file that contains all stability data
-#    h5Out = h5py.File(mainDir + '/Metadata/Full-Data.h5','a')
+    h5Out = h5py.File(mainDir + '/Metadata/Full-Data.h5','a')
 
     # Determine all days in run folder that need to be analyzed
-    h5Days = [x for x in os.listdir(mainDir + run) if '.h5' in x]
+    h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
 
     # For each day get the times and the corresponding SPEQ fits
     for d in h5Days:
 
+        # Show which dataset is currently being analyzed
         print run,d
 
         # Open current hdf5 file
         h5In = h5py.File(mainDir + run + '/' + d, 'r')
         timeBins = h5In['/SPEQ/vanilla/Times'][...]
+        for i in range(len(timeBins)):
+            currentTimeGroup = h5Out.create_group('/%s/%s/%s/'%(run,d,timeBins[i]))
+            for analysisType in ['vanilla','lbl','cmf']:
+                currentTimeGroup.attrs['%s-spe-charge'%analysisType] = h5In['/SPEQ/%s/PolyaBest'%analysisType][0,i]
 
         # Get total number of triggers for Signal and Background regions
         # and determine total power delivered in 10 minute windows
@@ -34,41 +39,50 @@ def main(argv):
             qSize = len(timeBins) - 1
             qIdxUpdate = True
             powerPerBin = np.zeros(len(timeBins))
-            numberOfTriggers = {'with-power': 0, 'without-power': 0, 'bad-power': 0, 'total': 0}
+            numberOfTriggers = {'with-power': np.zeros(len(timeBins)), 'without-power': np.zeros(len(timeBins)),
+                                'bad-power': np.zeros(len(timeBins)), 'total': np.zeros(len(timeBins))}
             if qSize == 0:
                 qIdxUpdate = False
 
             # Add beam power to the proper time bins
-            numberOfTriggers['total'] += len(noEventBeamPower)
             for t,p in zip(noEventsTimeStamps,noEventBeamPower):
                 if qIdxUpdate:
                     if t >= timeBins[qIdx+1]:
                         qIdx += 1
                     if qIdx >= qSize:
                         qIdxUpdate = False
+                numberOfTriggers['total'][qIdx] += 1
                 if p > 0:
-                    numberOfTriggers['with-power'] += 1
+                    numberOfTriggers['with-power'][qIdx] += 1
                     powerPerBin[qIdx] += p
                 elif p == 0:
-                    numberOfTriggers['without-power'] += 1
+                    numberOfTriggers['without-power'][qIdx] += 1
                 else:
-                    numberOfTriggers['bad-power'] += 1
+                    numberOfTriggers['bad-power'][qIdx] += 1
 
             eventTimeIndex= h5In['/%s/speQindex'%wd][...]
             eventBeamPower = h5In['/%s/beam-power'%wd][...]
 
-            numberOfTriggers['total'] += len(eventBeamPower)
             for qIdx,p in zip(eventTimeIndex,eventBeamPower):
+                numberOfTriggers['total'][qIdx] += 1
                 if p > 0:
-                    numberOfTriggers['with-power'] += 1
+                    numberOfTriggers['with-power'][qIdx] += 1
                     powerPerBin[qIdx] += p
                 elif p == 0:
-                    numberOfTriggers['without-power'] += 1
+                    numberOfTriggers['without-power'][qIdx] += 1
                 else:
-                    numberOfTriggers['bad-power'] += 1
-        print powerPerBin
-        print np.sum(powerPerBin)/1.0e6/3600.0/60.0
-        print numberOfTriggers
+                    numberOfTriggers['bad-power'][qIdx] += 1
+
+            for i in range(len(timeBins)):
+                currentTimeGroup = h5Out['/%s/%s/%s/'%(run,d,timeBins[i])]
+                currentWindowGroup = currentTimeGroup.create_group('/%s/'%wd)
+                currentWindowGroup.attrs['triggers-with-power'] = numberOfTriggers['with-power'][i]
+                currentWindowGroup.attrs['triggers-without-power'] = numberOfTriggers['without-power'][i]
+                currentWindowGroup.attrs['triggers-with-bad-power'] = numberOfTriggers['bad-power'][i]
+                currentWindowGroup.attrs['total-triggers'] = numberOfTriggers['total'][i]
+                currentWindowGroup.attrs['total-power'] = powerPerBin[i]/1.0e6/3600.0/60.0
+        h5In.close()
+    h5Out.close()
 # ============================================================================
 #                                Run program
 # ============================================================================
