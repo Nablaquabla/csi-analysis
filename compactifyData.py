@@ -67,7 +67,7 @@ def main(argv):
                 else:
                     numberOfTriggers['bad-power'] += 1
         print powerPerBin
-        print np.sum(powerPerBin)/1e6/3600
+        print np.sum(powerPerBin)/1.0e6/3600.0/60.0
         print numberOfTriggers
 # ============================================================================
 #                                Run program
