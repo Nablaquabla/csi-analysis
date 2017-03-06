@@ -114,5 +114,4 @@ def main(argv):
 #                                Run program
 # ============================================================================
 if __name__ == '__main__':
-    for run in runDirs:
-        main(sys.argv)
+    main(sys.argv)
