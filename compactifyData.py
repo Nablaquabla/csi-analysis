@@ -4,18 +4,17 @@ import h5py
 import numpy as np
 import os
 
-dataKeys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','median-csi-baseline','average-csi-baseline','std-csi-baseline',
+dataKeys = ['timestamp','median-csi-baseline','average-csi-baseline','std-csi-baseline',
             'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
-            'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90',
-            'muon-index']
+            'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90']
 
 def main(argv):
     mainDir = argv[1]
     run = argv[2]
 
     # Create/open stability HDF5 file that contains all stability data
-    h5Out = h5py.File(mainDir + '/Metadata/Full-Data.h5','w')
+    h5Out = h5py.File(mainDir + '/Metadata/%s-Final-Data.h5'%run,'w')
 
     # Determine all days in run folder that need to be analyzed
     h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
@@ -94,11 +93,16 @@ def main(argv):
                 currentWindowGroup.attrs.create('overflows', np.sum(h5In['/I/%s/overflowCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
                 currentWindowGroup.attrs.create('muon-vetos', np.sum(h5In['/I/%s/muonVetoCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
                 currentWindowGroup.attrs.create('vanilla-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)]) / np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
-                currentWindowGroup.attrs.create('cmf-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
+                currentWindowGroup.attrs.create('cmf-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])[:11]/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
 
-                cut = (h5In['/%s/speQindex'%wd][...] == i) * np.array((h5In['/%s/cmf-iw-peaks'%wd][...] >= 6) + (h5In['/%s/vanilla-iw-peaks'%wd][...] >= 6),dtype=bool)
+                cut_iw = np.array((h5In['/%s/cmf-iw-peaks'%wd][...] >= 6) + (h5In['/%s/vanilla-iw-peaks'%wd][...] >= 6),dtype=bool)
+                cut_mv = (h5In['/%s/muon-veto-flag'%wd][...] == 0)
+                cut_o = (h5In['/%s/overflow-flag'%wd][...] == 0)
+                cut_lg = (h5In['/%s/linear-gate-flag'%wd][...] == 0)
+                cut_qidx = (h5In['/%s/speQindex'%wd][...] == i)
+
+                cut =  cut_iw * cut_mv * cut_o * cut_lg * cut_qidx
                 for dK in dataKeys:
-                    print dK
                     currentWindowGroup.create_dataset(dK,data=h5In['/%s/%s'%(wd,dK)][...][cut])
 
         h5In.close()
