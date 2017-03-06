@@ -99,7 +99,7 @@ def main(argv):
                 cut = (h5In['/%s/speQindex'%wd][...] == i) * np.array((h5In['/%s/cmf-iw-peaks'%wd][...] >= 6) + (h5In['/%s/vanilla-iw-peaks'%wd][...] >= 6),dtype=bool)
                 for dK in dataKeys:
                     print dK
-                    currentWindowGroup.create_dataset(dK,h5In['/%s/%s'%(wd,dK)][...][cut])
+                    currentWindowGroup.create_dataset(dK,data=h5In['/%s/%s'%(wd,dK)][...][cut])
 
         h5In.close()
     h5Out.close()
