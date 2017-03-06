@@ -9,7 +9,7 @@ def main(argv):
     run = argv[2]
 
     # Create/open stability HDF5 file that contains all stability data
-    h5Out = h5py.File(mainDir + '/Metadata/Full-Data.h5','a')
+    h5Out = h5py.File(mainDir + '/Metadata/Full-Data.h5','w')
 
     # Determine all days in run folder that need to be analyzed
     h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
@@ -26,7 +26,7 @@ def main(argv):
         for i in range(len(timeBins)):
             currentTimeGroup = h5Out.create_group('/%s/%s/%s/'%(run,d,timeBins[i]))
             for analysisType in ['vanilla','lbl','cmf']:
-                currentTimeGroup.attrs['%s-spe-charge'%analysisType] = h5In['/SPEQ/%s/PolyaBest'%analysisType][0,i]
+                currentTimeGroup.attrs['%s-spe-charge'%analysisType] = h5In['/SPEQ/%s/PolyaBest'%analysisType][i,0]
 
         # Get total number of triggers for Signal and Background regions
         # and determine total power delivered in 10 minute windows
