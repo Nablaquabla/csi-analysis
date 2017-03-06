@@ -87,8 +87,10 @@ def main(argv):
                 currentWindowGroup.attrs.create('linear-gates', np.sum(h5In['/I/%s/linearGateCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
                 currentWindowGroup.attrs.create('overflows', np.sum(h5In['/I/%s/overflowCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
                 currentWindowGroup.attrs.create('muon-vetos', np.sum(h5In['/I/%s/muonVetoCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
-                currentWindowGroup.attrs.create('vanilla-pt-acceptance', 1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)],dtype=np.float64)
-                currentWindowGroup.attrs.create('cmf-pt-acceptance', 1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)],dtype=np.float64)
+                currentWindowGroup.attrs.create('vanilla-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)]) / np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
+                currentWindowGroup.attrs.create('cmf-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
+
+
 #                for data in ['timestamp''std-csi-baseline','vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
 #                             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
 #                             'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90']:
