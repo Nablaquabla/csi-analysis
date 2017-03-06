@@ -14,7 +14,7 @@ def main(argv):
     run = argv[2]
 
     # Create/open stability HDF5 file that contains all stability data
-    h5Out = h5py.File(mainDir + '/Metadata/%s-Final-Data.h5'%run,'w')
+    h5Out = h5py.File(mainDir + '/Metadata/Final-Data.h5'%run,'w')
 
     # Determine all days in run folder that need to be analyzed
     h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
@@ -100,8 +100,9 @@ def main(argv):
                 cut_o = (h5In['/%s/overflow-flag'%wd][...] == 0)
                 cut_lg = (h5In['/%s/linear-gate-flag'%wd][...] == 0)
                 cut_qidx = (h5In['/%s/speQindex'%wd][...] == i)
+                cut_pt = np.array((h5In['/%s/cmf_pt_peaks'][...] <= 10) + (h5In['/%s/vanilla_pt_peaks'][...] <= 10), dtype=bool)
 
-                cut =  cut_iw * cut_mv * cut_o * cut_lg * cut_qidx
+                cut =  cut_iw * cut_mv * cut_o * cut_lg * cut_qidx * cut_pt
                 for dK in dataKeys:
                     currentWindowGroup.create_dataset(dK,data=h5In['/%s/%s'%(wd,dK)][...][cut])
 
