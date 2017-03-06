@@ -4,6 +4,12 @@ import h5py
 import numpy as np
 import os
 
+dataKeys = ['timestamp','overflow-flag','muon-veto-flag','linear-gate-flag','median-csi-baseline','average-csi-baseline','std-csi-baseline',
+            'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
+            'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
+            'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90',
+            'muon-index']
+
 def main(argv):
     mainDir = argv[1]
     run = argv[2]
@@ -90,10 +96,9 @@ def main(argv):
                 currentWindowGroup.attrs.create('vanilla-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)]) / np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
                 currentWindowGroup.attrs.create('cmf-pt-acceptance', (1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])),dtype=np.float64)
 
-
-#                for data in ['timestamp''std-csi-baseline','vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
-#                             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
-#                             'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90']:
+                cut = h5In['/%s/speQindex'%wd][...] == i
+                for dK in dataKeys:
+                    currentWindowGroup.create_dataset(dK,h5In['/%s/%s'%(wd,dK)][...][cut])
 
         h5In.close()
     h5Out.close()
