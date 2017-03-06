@@ -46,13 +46,13 @@ def main(argv):
                         qIdx += 1
                     if qIdx >= qSize:
                         qIdxUpdate = False
-                        if p > 0:
-                            numberOfTriggers['with-power'] += 1
-                            powerPerBin[qIdx] += p
-                        elif p == 0:
-                            numberOfTriggers['without-power'] += 1
-                        else:
-                            numberOfTriggers['bad-power'] += 1
+                if p > 0:
+                    numberOfTriggers['with-power'] += 1
+                    powerPerBin[qIdx] += p
+                elif p == 0:
+                    numberOfTriggers['without-power'] += 1
+                else:
+                    numberOfTriggers['bad-power'] += 1
 
             eventTimeIndex= h5In['/%s/speQindex'%wd][...]
             eventBeamPower = h5In['/%s/beam-power'%wd][...]
@@ -67,6 +67,7 @@ def main(argv):
                 else:
                     numberOfTriggers['bad-power'] += 1
         print powerPerBin
+        print np.sum(powerPerBin)/1e6/3600
         print numberOfTriggers
 # ============================================================================
 #                                Run program
