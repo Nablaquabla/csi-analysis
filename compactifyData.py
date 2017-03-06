@@ -78,11 +78,21 @@ def main(argv):
             for i in range(len(timeBins)):
                 currentTimeGroup = h5Out['/%s/%s/%s'%(run,d,timeBinsHumanReadable[i])]
                 currentWindowGroup = currentTimeGroup.create_group('%s'%wd)
-                currentWindowGroup.attrs.create('triggers-with-power',numberOfTriggers['with-power'][i],dtype=np.uint32)
-                currentWindowGroup.attrs['triggers-without-power'] = numberOfTriggers['without-power'][i]
-                currentWindowGroup.attrs['triggers-with-bad-power'] = numberOfTriggers['bad-power'][i]
-                currentWindowGroup.attrs['total-triggers'] = numberOfTriggers['total'][i]
-                currentWindowGroup.attrs['total-power'] = powerPerBin[i]/1.0e6/3600.0/60.0
+                currentWindowGroup.attrs.create('triggers-with-power', numberOfTriggers['with-power'][i], dtype=np.uint32)
+                currentWindowGroup.attrs.create('triggers-without-power', numberOfTriggers['without-power'][i], dtype=np.uint32)
+                currentWindowGroup.attrs.create('triggers-with-bad-power', numberOfTriggers['bad-power'][i], dtype=np.uint32)
+                currentWindowGroup.attrs.create('total-triggers', numberOfTriggers['total'][i], dtype=np.uint32)
+                currentWindowGroup.attrs.create('total-power', powerPerBin[i]/1.0e6/3600.0/60.0, dtype=np.float64)
+                currentWindowGroup.attrs.create('average-baseline', np.average(h5In['/I/%s/averageBaseline'%(timeBinsHumanReadable[i])]),dtype=np.float)
+                currentWindowGroup.attrs.create('linear-gates', np.sum(h5In['/I/%s/linearGateCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
+                currentWindowGroup.attrs.create('overflows', np.sum(h5In['/I/%s/overflowCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
+                currentWindowGroup.attrs.create('muon-vetos', np.sum(h5In['/I/%s/muonVetoCounter'%(timeBinsHumanReadable[i])]),dtype=np.uint32)
+                currentWindowGroup.attrs.create('vanilla-pt-acceptance', 1.0*np.cumsum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/vanilla/pt'%(timeBinsHumanReadable[i],wd)],dtype=np.float64)
+                currentWindowGroup.attrs.create('cmf-pt-acceptance', 1.0*np.cumsum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)])/np.sum(h5In['/I/%s/peaksIn%s/cmf/pt'%(timeBinsHumanReadable[i],wd)],dtype=np.float64)
+#                for data in ['timestamp''std-csi-baseline','vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
+#                             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
+#                             'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90']:
+
         h5In.close()
     h5Out.close()
 # ============================================================================
