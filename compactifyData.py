@@ -15,16 +15,18 @@ def main(argv):
     h5Days = [x for x in np.sort(os.listdir(mainDir + run)) if '.h5' in x]
 
     # For each day get the times and the corresponding SPEQ fits
-    for d in h5Days:
+    for day in h5Days:
 
         # Show which dataset is currently being analyzed
-        print run,d
+        print run,day
+        d = day.split('.')[0]
 
         # Open current hdf5 file
-        h5In = h5py.File(mainDir + run + '/' + d, 'r')
+        h5In = h5py.File(mainDir + run + '/' + day, 'r')
         timeBins = h5In['/SPEQ/vanilla/Times'][...]
+        timeBinsHumanReadable = np.sort(['/I/'].keys())
         for i in range(len(timeBins)):
-            currentTimeGroup = h5Out.create_group('/%s/%s/%s/'%(run,d,timeBins[i]))
+            currentTimeGroup = h5Out.create_group('/%s/%s/%s'%(run,d,timeBinsHumanReadable[i]))
             for analysisType in ['vanilla','lbl','cmf']:
                 currentTimeGroup.attrs['%s-spe-charge'%analysisType] = h5In['/SPEQ/%s/PolyaBest'%analysisType][i,0]
 
@@ -74,8 +76,8 @@ def main(argv):
                     numberOfTriggers['bad-power'][qIdx] += 1
 
             for i in range(len(timeBins)):
-                currentTimeGroup = h5Out['/%s/%s/%s/'%(run,d,timeBins[i])]
-                currentWindowGroup = currentTimeGroup.create_group('/%s/'%wd)
+                currentTimeGroup = h5Out['/%s/%s/%s'%(run,d,timeBinsHumanReadable[i])]
+                currentWindowGroup = currentTimeGroup.create_group('%s'%wd)
                 currentWindowGroup.attrs['triggers-with-power'] = numberOfTriggers['with-power'][i]
                 currentWindowGroup.attrs['triggers-without-power'] = numberOfTriggers['without-power'][i]
                 currentWindowGroup.attrs['triggers-with-bad-power'] = numberOfTriggers['bad-power'][i]
