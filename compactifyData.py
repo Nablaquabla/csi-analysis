@@ -101,7 +101,7 @@ def main(argv):
                 cut_o = (h5In['/%s/overflow-flag'%wd][...] == 0)
                 cut_lg = (h5In['/%s/linear-gate-flag'%wd][...] == 0)
                 cut_qidx = (h5In['/%s/speQindex'%wd][...] == i)
-                cut_pt = np.array((h5In['/%s/cmf_pt_peaks'%wd][...] <= 10) + (h5In['/%s/vanilla_pt_peaks'%wd][...] <= 10), dtype=bool)
+                cut_pt = np.array((h5In['/%s/cmf-pt-peaks'%wd][...] <= 10) + (h5In['/%s/vanilla-pt-peaks'%wd][...] <= 10), dtype=bool)
 
                 cut =  cut_iw * cut_mv * cut_o * cut_lg * cut_qidx * cut_pt
                 for dK in dataKeys:
