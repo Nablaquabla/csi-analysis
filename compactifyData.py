@@ -16,9 +16,13 @@ def main(argv):
 
     # For each day get the times and the corresponding SPEQ fits
     for d in h5Days:
+
         print run,d
+
+        # Open current hdf5 file
         h5In = h5py.File(mainDir + run + '/' + d, 'r')
         timeBins = h5In['/SPEQ/vanilla/Times'][...]
+
         # Get total number of triggers for Signal and Background regions
         # and determine total power delivered in 10 minute windows
         for wd in ['S','B']:
@@ -30,6 +34,7 @@ def main(argv):
             qSize = len(timeBins) - 1
             qIdxUpdate = True
             powerPerBin = np.zeros(len(timeBins))
+            numberOfTriggers = {'with-power': 0, 'without-power': 0, 'bad-power': 0}
             if qSize == 0:
                 qIdxUpdate = False
 
@@ -40,15 +45,27 @@ def main(argv):
                         qIdx += 1
                     if qIdx >= qSize:
                         qIdxUpdate = False
-                powerPerBin[qIdx] += p
-            print np.sum(powerPerBin) / 60.0 / 60.0 / 60.0 / 1000.0 / 1000.0
+                        if p > 0:
+                            numberOfTriggers['with-power'] += 1
+                            powerPerBin[qIdx] += p
+                        elif p == 0:
+                            numberOfTriggers['without-power'] += 1
+                        else:
+                            numberOfTriggers['bad-power'] += 1
 
             eventTimeIndex= h5In['/%s/speQindex'%wd][...]
             eventBeamPower = h5In['/%s/beam-power'%wd][...]
 
             for qIdx,p in zip(eventTimeIndex,eventBeamPower):
-                powerPerBin[qIdx] += p
-            print np.sum(powerPerBin) / 60.0 / 60.0 / 60.0 / 1000.0 / 1000.0
+                if p > 0:
+                    numberOfTriggers['with-power'] += 1
+                    powerPerBin[qIdx] += p
+                elif p == 0:
+                    numberOfTriggers['without-power'] += 1
+                else:
+                    numberOfTriggers['bad-power'] += 1
+
+        print numberOfTriggers
 # ============================================================================
 #                                Run program
 # ============================================================================
