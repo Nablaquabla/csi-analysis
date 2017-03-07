@@ -8,7 +8,7 @@ import sys
 dataKeys = ['timestamp','median-csi-baseline','average-csi-baseline','std-csi-baseline',
             'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
             'cmf-pt-peaks','cmf-roi-peaks','cmf-iw-peaks','cmf-arrival-index','cmf-charge','cmf-rt-10','cmf-rt-50','cmf-rt-90',
-            'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90']
+            'lbl-charge','lbl-rt-10','lbl-rt-50','lbl-rt-90','beam-power']
 
 def main(argv):
     mainDir = argv[1]
