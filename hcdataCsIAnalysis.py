@@ -14,7 +14,7 @@ def main(args):
         for fileIndex in range(int(fileNumber)):
             cmd = ['/nfs_home/bjo/GitHub/csi-analysisi/hcdataCsIAnalysis',analysisMode,dataDir,fileIndex,outDir,specificTime]
             subprocess.call(cmd)
-            if fileIndex > 10:
+            if fileIndex > 3:
                 break
 
     else:

@@ -13,11 +13,11 @@ def main(specificDay):
     mainOutDir = '/data2/coherent/data/csi/bjs-analysis/'
 
     # Choose run to analyze
-    runDirs = ['Run-15-12-26-08-30-40']
+#    runDirs = ['Run-15-12-26-08-30-40']
 #    runDirs = ['Run-15-09-21-20-58-01'] 
 #    runDirs = ['Run-17-02-08-00-00-00']
 #    runDirs = ['Run-17-02-08-16-39-02']
-#    runDirs = ['Run-15-06-25-12-53-44']
+    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-08-18-14-51-18']
 #    runDirs = ['Run-15-08-31-00-23-36']
 #    runDirs = ['Run-15-10-03-09-26-22']
@@ -74,6 +74,7 @@ def main(specificDay):
 #            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
 #            print cmd
             os.system(cmd)
+            
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         main(sys.argv[1])
