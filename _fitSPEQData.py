@@ -137,6 +137,7 @@ def main(args):
                         lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,0,0,1e6],[6,1,1,3,12],[7,1,1,0.3,0.6],[8,1,1,16,28]]
 
                 if dataType == 'Ba':
+                    widthMinimum = 0
                     if analysisType == 'lbl' or analysisType == 'vanilla':
                         p0 = [56, 8.0, 0.5*np.max(yQ),0,0,1.0*np.max(yQ),50.0,0.5,17.0,0]
                     elif analysisType == 'cmf':
