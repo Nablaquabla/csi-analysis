@@ -172,7 +172,7 @@ def main(args):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
-                    except ValueError:
+                    except (ValueError,TypeError):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
