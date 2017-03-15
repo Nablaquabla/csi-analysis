@@ -172,10 +172,15 @@ def main(args):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
-                    except (ValueError,TypeError):
+                    except (ValueError):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
+                    except (TypeError):
+                        print run, day, time
+                        pars = [[-1]*len(p0),[-1]*len(p0),[-1]*len(p0)]
+                        break
+
                     if p0[7] < lims[7][3]: p0[7] = lims[7][3]
                     if p0[7] > lims[7][4]: p0[7] = lims[7][4]
                     if p0[8] < lims[8][3]: p0[8] = lims[8][3]
