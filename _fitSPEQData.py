@@ -12,6 +12,8 @@ import os
 import datetime
 import pytz
 
+dataType = 'Ba'
+
 # Define timezones used in analysis
 eastern = pytz.timezone('US/Eastern')
 utc = pytz.utc
@@ -98,7 +100,7 @@ def main(args):
             # Prepare fit data
             xQ = np.arange(-50,250)
             yQ = h5In['/I/%s/peakCharge/%s'%(time,analysisType)][...]
-            
+
             # If not enough SPE have been found use previous data point
             if np.sum(yQ) > 1e3 and np.max(yQ) < 12500:
 
@@ -118,21 +120,30 @@ def main(args):
                 c = (xQ >= xMin)
 
                 # Prepare initial fit parameter estimates and set fit limits
-                if analysisType == 'cmf': 
-                    p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
-                    widthMinimum = 4.5
-                    lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,1,0,1e6],[6,1,1,1,10],[7,1,1,0.225,0.55],[8,1,1,16,35]]
+                if dataType == 'SNS':
+                    if analysisType == 'cmf':
+                        p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
+                        widthMinimum = 4.5
+                        lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,1,0,1e6],[6,1,1,1,10],[7,1,1,0.225,0.55],[8,1,1,16,35]]
 
-                elif analysisType == 'vanilla':
-                    p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
-                    widthMinimum = 4.75
-                    lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,0,0,1e6],[6,1,1,4,12],[7,1,1,0.4,0.9],[8,1,1,18,24]]
+                    elif analysisType == 'vanilla':
+                        p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
+                        widthMinimum = 4.75
+                        lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,0,0,1e6],[6,1,1,4,12],[7,1,1,0.4,0.9],[8,1,1,18,24]]
 
-                else:
-                    p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
-                    widthMinimum = 4.75
-                    lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,0,0,1e6],[6,1,1,3,12],[7,1,1,0.3,0.6],[8,1,1,16,28]]
+                    else:
+                        p0 = [70.0, 6.0, np.max(yf), np.max(yf)/50.0, 0.002, 5e4, 10.0, 0.5 , 17.0]
+                        widthMinimum = 4.75
+                        lims = [[0,1,1,50,100],[1,1,1,widthMinimum,6.75],[2,1,0,0,0],[3,1,1,0,100],[4,1,1,0,0.3],[5,1,0,0,1e6],[6,1,1,3,12],[7,1,1,0.3,0.6],[8,1,1,16,28]]
 
+                if dataType == 'Ba':
+                    widthMinimum = 0
+                    if analysisType == 'lbl' or analysisType == 'vanilla':
+                        p0 = [56, 8.0, 0.5*np.max(yQ),0,0,1.0*np.max(yQ),50.0,0.5,17.0,0]
+                    elif analysisType == 'cmf':
+                        p0 = [56, 8.0, 0.5*np.max(yQ),0,0,1.0*np.max(yQ),50.0,0.5,17.0,0]
+
+                    lims = [[0,1,0,50,0],[1,1,0,4,0],[2,1,0,0,0],[3,1,0,0,0],[4,1,0,0,0],[5,1,0,0,0],[7,1,0,0,0],[8,1,0,10,0],[9,1,0,0,0]]
 
                 # Fit data - If a bad fit is encountered, adjust parameters and refit
                 while (x2 > 0.55*scaling or fitWidth == widthMinimum):
@@ -140,7 +151,7 @@ def main(args):
                     # Fit data
                     try:
                         _,pars,xfit,yfit = ef.arbFit(pFit3,xQ[c],yf[c],'Poisson',p0,lims)
-                                            
+
                         # Calculate reduced chi2
                         x2 = np.sum((pFit3(xQ[c],pars[0]) - yf[c])**2/pFit3(xQ[c],pars[0]))/np.sum(c)
                         x2Arr.append(x2)
@@ -161,10 +172,15 @@ def main(args):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
-                    except ValueError:
+                    except (ValueError):
                         # Otherwise change initial fit parameter
                         p0[7] += 0.1*(0.5-np.random.rand())
                         p0[8] += (0.5-np.random.rand())
+                    except (TypeError):
+                        print run, day, time
+                        pars = [[-1]*len(p0),[-1]*len(p0),[-1]*len(p0)]
+                        break
+
                     if p0[7] < lims[7][3]: p0[7] = lims[7][3]
                     if p0[7] > lims[7][4]: p0[7] = lims[7][4]
                     if p0[8] < lims[8][3]: p0[8] = lims[8][3]
