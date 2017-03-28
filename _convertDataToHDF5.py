@@ -233,10 +233,12 @@ def main(argv):
 
                     # Read data and check convert data files with a single entry to arrays
                     _tdata = np.loadtxt('%s/%s/%s/%s-%s'%(mainDir,run,d,w,t)).T
+                    
                     if np.isscalar(_tdata[0]):
                         _tdata = np.array([np.array([x]) for x in _tdata])
-                    
-                    cut = np.logical_not(_tdata[0] == '0000000000000')
+                                        
+                    cut = np.logical_not(_tdata[0] == 0)
+                    print cut
                     for i in range(len(_tdata)):
                         _tdata[i] = _tdata[i][cut]
 

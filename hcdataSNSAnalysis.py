@@ -43,7 +43,8 @@ def main(specificDay):
 #    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
 #               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17']    
 #    runDirs = ['Run-17-03-03-11-18-29','Run-17-03-13-11-48-49']
-    runDirs = ['Run-17-02-21-14-04-51']
+#    runDirs = ['Run-17-02-21-14-04-51']
+    runDirs = ['Run-17-02-02-15-26-34']
     subdirs = {}
     days_in = {}
     for run in runDirs:

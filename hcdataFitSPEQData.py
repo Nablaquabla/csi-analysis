@@ -5,13 +5,13 @@ import time as tm
 # Main function handling all internals
 # -----------------------------------------------------------------------------
 def main():
-    mainDir = '/data2/coherent/data/csi/bjs-analysis/'
+    mainDir = '/data2/coherent/data/csi/bjs-analysis/Processed/'
     
     # SNS analysis
-#    runDirs = ['Run-15-09-21-20-58-01'] 
+    runDirs = ['Run-15-09-21-20-58-01'] 
 #    runDirs = ['Run-17-02-08-00-00-00']
 #    runDirs = ['Run-17-02-08-16-39-02']
-    runDirs = ['Run-15-06-25-12-53-44']
+#    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-08-18-14-51-18']
 #    runDirs = ['Run-15-08-31-00-23-36']
 #    runDirs = ['Run-15-10-03-09-26-22']
@@ -31,17 +31,17 @@ def main():
 #    runDirs = ['Run-16-08-04-17-23-52','Run-16-08-09-00-29-54','Run-16-08-16-00-22-26']
 #    runDirs = ['Run-16-08-27-11-33-40','Run-16-08-30-11-37-42','Run-16-09-06-15-23-15']
 #    runDirs = ['Run-16-09-15-15-23-58','Run-16-09-26-15-34-10']
-#    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
-#               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17']   
+    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
+               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17']   
     # Ba analysis
 #    runDirs = ['Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
 #               'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
 #    runDirs = ['Run-15-03-27-12-42-26']
 
     for run in runDirs:
-        days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
+        days = [x for x in os.listdir('%s%s/'%(mainDir,run)) if '.h5' in x]
         for d in days:
-            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubConvertDataToHDF5.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,d)
+            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubFitSPEQData.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,d[:-3])
             os.system(cmd)
             tm.sleep(1)
 
