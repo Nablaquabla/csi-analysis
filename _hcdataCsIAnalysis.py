@@ -1,4 +1,4 @@
-#!/user/bin/env python
+#!/usr/bin/env python
 import sys
 import subprocess
 
@@ -12,13 +12,14 @@ def main(args):
     
     if specificTime == '0':
         for fileIndex in range(int(fileNumber)):
-            cmd = ['/nfs_home/bjo/GitHub/csi-analysisi/hcdataCsIAnalysis',analysisMode,dataDir,fileIndex,outDir,specificTime]
+            cmd = ['/nfs_home/bjo/GitHub/csi-analysis/hcdataCsIAnalysis',analysisMode,dataDir,str(fileIndex),outDir,specificTime]
+	    print cmd
             subprocess.call(cmd)
-            if fileIndex > 3:
-                break
+#            if fileIndex > 3:
+#                break
 
     else:
-        cmd = ['/nfs_home/bjo/GitHub/csi-analysisi/hcdataCsIAnalysis',analysisMode,dataDir,time,outDir,specificTime]
+        cmd = ['/nfs_home/bjo/GitHub/csi-analysis/hcdataCsIAnalysis',analysisMode,dataDir,time,outDir,specificTime]
         subprocess.call(cmd)
     
     return

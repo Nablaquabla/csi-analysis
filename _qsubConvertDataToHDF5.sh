@@ -1,6 +1,6 @@
 #!/bin/bash
-#PBS -o /data2/coherent/data/csi/bjs-analysis/Logs/ConvertData.log
-#PBS -e /data2/coherent/data/csi/bjs-analysis/Errs/ConvertData.err
+#PBS -o /dev/null
+#PBS -e /dev/null
 #PBS -l nodes=1:ppn=1
 #PBS -l walltime=00:45:00
 #PBS -l mem=750mb
