@@ -1,4 +1,4 @@
-#!/home/bjs66/anaconda2/bin/python
+#!/usr/bin/env python
 """
 Created on Mon Feb 01 15:03:56 2016
 
@@ -12,7 +12,8 @@ import os
 import datetime
 import pytz
 
-dataType = 'Ba'
+dataType = 'SNS'
+#dataType = 'Ba'
 
 # Define timezones used in analysis
 eastern = pytz.timezone('US/Eastern')

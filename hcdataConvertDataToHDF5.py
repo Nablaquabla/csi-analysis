@@ -11,7 +11,7 @@ def main():
 #    runDirs = ['Run-15-09-21-20-58-01'] 
 #    runDirs = ['Run-17-02-08-00-00-00']
 #    runDirs = ['Run-17-02-08-16-39-02']
-    runDirs = ['Run-15-06-25-12-53-44']
+#    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-08-18-14-51-18']
 #    runDirs = ['Run-15-08-31-00-23-36']
 #    runDirs = ['Run-15-10-03-09-26-22']
@@ -37,7 +37,8 @@ def main():
 #    runDirs = ['Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
 #               'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
 #    runDirs = ['Run-15-03-27-12-42-26']
-
+    runDirs = ['Run-17-03-03-11-18-29','Run-17-03-13-11-48-49']
+#
     for run in runDirs:
         days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
         for d in days:
