@@ -5,7 +5,7 @@ import time as tm
 # Main function handling all internals
 # -----------------------------------------------------------------------------
 def main():
-    mainDir = '/data2/coherent/data/csi/bjs-analysis/'
+    mainDir = '/data2/coherent/data/csi/bjs-analysis/Processed/'
     
     # SNS analysis
 #    runDirs = ['Run-15-09-21-20-58-01'] 
@@ -33,20 +33,17 @@ def main():
 #    runDirs = ['Run-16-09-15-15-23-58','Run-16-09-26-15-34-10']
 #    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
 #               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17']   
+    runDirs = ['Run-17-02-02-15-26-34']
+   
     # Ba analysis
 #    runDirs = ['Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
 #               'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
 #    runDirs = ['Run-15-03-27-12-42-26']
-#    runDirs = ['Run-17-03-03-11-18-29','Run-17-03-13-11-48-49']
-    runDirs = ['Run-17-02-02-15-26-34']
- 
-#
+
     for run in runDirs:
-        days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
-        for d in days:
-            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubConvertDataToHDF5.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,d)
-            os.system(cmd)
-            tm.sleep(1)
+        cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubGetSPEQIndex.sh -v mainDir="%s",run="%s"'%(mainDir,run)
+        os.system(cmd)
+        tm.sleep(1)
 
 if __name__ == '__main__':
     main()

@@ -1,4 +1,4 @@
-#!/home/bjs66/anaconda2/bin/python
+#!/usr/bin/env python
 """
 Created on Mon Feb 01 15:03:56 2016
 
