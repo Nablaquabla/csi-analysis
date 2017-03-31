@@ -20,7 +20,7 @@ def createCondorFile(run,day):
         # Set main run directory, e.g. Run-15-10-02-27-32-23/151002
 	    # Set current time to be analzyed (w/o .zip extension!), e.g. 184502
 	    # Set output directory, eg Output/ Run-15-10-02-27-32-23/151002
-        f.write('Arguments = \"%s %s %s %s\"\n'%(run,day,mainDataDir,beamPowerDir))
+        f.write('Arguments = \"%s %s %s %s\"\n'%(mainDataDir,run,day,beamPowerDir))
 
         # Standard cluster universe
         f.write('universe   = vanilla\n')
