@@ -6,8 +6,10 @@ import time as tm
 # -----------------------------------------------------------------------------
 def main():
     mainDir = '/data2/coherent/data/csi/bjs-analysis/Processed/'
-    beamPowerDir = '/data2/coherent/data/csi/bjs-analysis/BeamPowerHistory/
+    beamPowerDir = '/data2/coherent/data/csi/bjs-analysis/BeamPowerHistory/'
+
     # SNS analysis
+#    runDirs = ['Run-15-09-21-20-58-01']
 #    runDirs = ['Run-15-09-21-20-58-01']
 #    runDirs = ['Run-17-02-08-00-00-00']
 #    runDirs = ['Run-17-02-08-16-39-02']
@@ -33,8 +35,21 @@ def main():
 #    runDirs = ['Run-16-09-15-15-23-58','Run-16-09-26-15-34-10']
 #    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
 #               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17']
-    runDirs = ['Run-17-02-02-15-26-34']
-
+#    runDirs = ['Run-17-02-02-15-26-34']
+#    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36',
+#               'Run-16-02-02-16-26-26','Run-16-08-27-11-33-40',
+#               'Run-16-08-30-11-37-42','Run-16-09-06-15-23-15',
+#               'Run-16-09-15-15-23-58','Run-16-09-26-15-34-10',
+#               'Run-16-10-04-16-48-32','Run-16-10-07-15-32-53',
+#               'Run-16-10-18-14-36-17','Run-16-11-02-18-39-29',
+#               'Run-16-11-04-11-08-14','Run-17-02-02-15-26-34',
+#               'Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
+#               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17',
+#               'Run-17-02-21-14-04-51','Run-17-03-03-11-18-29',
+#               'Run-17-03-13-11-48-49']
+#    runDirs = ['Run-16-02-02-16-26-26']
+    runDirs = ['Run-17-02-21-14-04-51','Run-17-03-03-11-18-29','Run-17-03-13-11-48-49']
+ 
     # Ba analysis
 #    runDirs = ['Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
 #               'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
@@ -42,6 +57,7 @@ def main():
 
     for run in runDirs:
         days = [x for x in os.listdir('%s%s/'%(mainDir,run)) if '.h5' in x]
+#        days = ['160211.h5','160215.h5']
         for d in days:
             cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubDetermineBeamStatus.sh -v mainDir="%s",run="%s",day="%s",beamDir="%s"'%(mainDir,run,d[:-3],beamPowerDir)
             os.system(cmd)

@@ -45,9 +45,10 @@ def main(showMissing,runMissing):
 #    runDirs = ['Run-17-02-02-15-26-34','Run-17-02-02-17-28-46','Run-17-02-08-16-39-02',
 #               'Run-17-02-08-21-55-48','Run-17-02-21-12-39-17','Run-17-02-21-14-04-51']   
 #    runDirs = ['Run-16-08-27-11-33-40','Run-16-08-30-11-37-42','Run-16-09-06-15-23-15','Run-16-09-15-15-23-58']
-    runDirs = ['Run-16-09-26-15-34-10','Run-16-10-04-16-48-32','Run-16-10-07-15-32-53','Run-16-10-18-14-36-17']
-
-
+#    runDirs = ['Run-16-09-26-15-34-10','Run-16-10-04-16-48-32','Run-16-10-07-15-32-53','Run-16-10-18-14-36-17']
+#    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36','Run-16-02-02-16-26-26']
+ 
+    runDirs = [x for x in os.listdir(mainOutDir) if 'Run' in x]
     subdirs = {}
     days_in = {}
     possibleSubDirs = ['beam_off_data','beam_on_data','sns_data']

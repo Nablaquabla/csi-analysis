@@ -1,4 +1,4 @@
-#!/home/bjs66/anaconda2/bin/python
+#!/usr/bin/env python
 
 import h5py
 import numpy as np
@@ -8,9 +8,9 @@ import datetime
 
 def main(argv):
 
-    run = argv[1]
-    d = argv[2]
-    dataDir = argv[3]
+    run = argv[2]
+    d = argv[3]
+    dataDir = argv[1]
     bphDir = argv[4]
 
     # Get beam power file and prepare keys for data readout
