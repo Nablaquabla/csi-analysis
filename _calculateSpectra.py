@@ -5,14 +5,14 @@ import datetime
 import pytz
 import sys
 import os
-import easyfy as ez
 
 def main(args):
 
     # Read output and data dirs
     dataDir = args[0]
     run = args[1]
-    outDir = args[2]
+    excludeTimeFile = args[2]
+    outDir = args[3]
 
     # Define SPEQ type to be analyzed (lbl,vanilla,cmf)
     speqType = 'lbl'
@@ -23,7 +23,7 @@ def main(args):
     epochBeginning = utc.localize(datetime.datetime(1970,1,1))
 
     # Read times that shall be excluded from the analysis
-    excludeTimes = np.loadtxt('excludeTimes.dat',dtype=str)
+    excludeTimes = np.loadtxt(excludeTimeFile,dtype=str)
 
     exTS = []
     for t in excludeTimes:
@@ -253,10 +253,12 @@ def main(args):
         fOut.close()
 
 if __name__ == '__main__':
-#    dataDir = sys.argv[1]
-#    outDir = sys.argv[2]
-    dataDir = 'F:/Work-Data-Storage/CsI/Condor/SNS/Testdir/Test-Data/'
-    outDir = 'F:/Work-Data-Storage/CsI/Condor/SNS/Testdir/Output-Data/'
-    main([dataDir,outDir])
+    dataDir = sys.argv[1]
+    run = sys.argv[2]
+    excludeTimeFile = sys.argv[3]
+    outDir = sys.argv[4]
+#    dataDir = 'F:/Work-Data-Storage/CsI/Condor/SNS/Testdir/Test-Data/'
+#    outDir = 'F:/Work-Data-Storage/CsI/Condor/SNS/Testdir/Output-Data/'
+    main([dataDir,run,excludeTimeFile,outDir])
 
 

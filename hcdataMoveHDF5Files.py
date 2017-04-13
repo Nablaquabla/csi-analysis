@@ -2,7 +2,8 @@
 import os
 
 mainDir = '/data2/coherent/data/csi/bjs-analysis/'
-runDirs = [x for x in os.listdir(mainDir) if 'Run' in x]
+#runDirs = [x for x in os.listdir(mainDir) if 'Run' in x]
+runDirs = ['Run-17-03-20-18-01-09']
 for rD in runDirs:
     hdfFiles = [x for x in os.listdir(mainDir + rD) if 'h5' in x]
     if len(hdfFiles) > 0:

@@ -7,12 +7,13 @@ import time as tm
 def main():
     mainDir = '/data2/coherent/data/csi/bjs-analysis/Processed/'
     outDir = '/data2/coherent/data/csi/bjs-analysis/Processed/Analyzed/'
+    excludeTimeFile = '/nfs_home/bjo/GitHub/csi-analysis/excludeTimes.dat'
 
     # SNS analysis
 #    runDirs = ['Run-15-09-21-20-58-01']
 #    runDirs = ['Run-17-02-08-00-00-00']
 #    runDirs = ['Run-17-02-08-16-39-02']
-    runDirs = ['Run-15-06-25-12-53-44']
+#    runDirs = ['Run-15-06-25-12-53-44']
 #    runDirs = ['Run-15-08-18-14-51-18']
 #    runDirs = ['Run-15-08-31-00-23-36']
 #    runDirs = ['Run-15-10-03-09-26-22']
@@ -47,14 +48,14 @@ def main():
 #               'Run-17-02-21-14-04-51','Run-17-03-03-11-18-29',
 #               'Run-17-03-13-11-48-49']
 #    runDirs = ['Run-16-02-02-16-26-26']
-#    runDirs = ['Run-15-06-25-12-53-44','Run-15-06-26-11-23-13','Run-15-07-31-18-30-14',
-#               'Run-16-02-15-13-46-34','Run-16-02-29-11-54-20','Run-16-03-09-13-00-14',
-#               'Run-16-03-22-18-09-33','Run-16-03-30-12-44-57','Run-16-04-12-11-54-27',
-#               'Run-16-04-20-11-22-48','Run-16-05-05-14-08-52','Run-16-05-12-14-07-59',
-#               'Run-16-05-17-14-40-34','Run-16-06-02-12-35-56','Run-16-06-17-12-09-12',
-#               'Run-16-06-27-17-50-08','Run-16-07-06-18-25-19','Run-16-07-12-11-44-55',
-#               'Run-16-07-18-11-50-24','Run-16-07-21-11-59-39','Run-16-07-28-12-49-17',
-#               'Run-16-08-04-17-23-52','Run-16-08-09-00-29-54','Run-16-08-16-00-22-26']
+    runDirs = ['Run-15-06-26-11-23-13','Run-15-07-31-18-30-14',
+               'Run-16-02-15-13-46-34','Run-16-02-29-11-54-20','Run-16-03-09-13-00-14',
+               'Run-16-03-22-18-09-33','Run-16-03-30-12-44-57','Run-16-04-12-11-54-27',
+               'Run-16-04-20-11-22-48','Run-16-05-05-14-08-52','Run-16-05-12-14-07-59',
+               'Run-16-05-17-14-40-34','Run-16-06-02-12-35-56','Run-16-06-17-12-09-12',
+               'Run-16-06-27-17-50-08','Run-16-07-06-18-25-19','Run-16-07-12-11-44-55',
+               'Run-16-07-18-11-50-24','Run-16-07-21-11-59-39','Run-16-07-28-12-49-17',
+               'Run-16-08-04-17-23-52','Run-16-08-09-00-29-54','Run-16-08-16-00-22-26']
 #    runDirs = ['Run-16-04-20-11-22-48']
 #    runDirs = ['Run-15-08-18-14-51-18','Run-15-08-31-00-23-36','Run-15-09-21-20-58-01',
 #               'Run-15-09-23-21-16-00','Run-15-10-03-09-26-22','Run-15-10-13-13-27-09',
@@ -67,7 +68,7 @@ def main():
 #    runDirs = ['Run-15-03-27-12-42-26']
 
     for run in runDirs:
-        cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubFitSPEQData.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,outDir)
+        cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubCalculateSpectra.sh -v mainDir="%s",run="%s",excludeTimeFile="%s",outDir="%s"'%(mainDir,run,excludeTimeFile,outDir)
         os.system(cmd)
         tm.sleep(1)
 

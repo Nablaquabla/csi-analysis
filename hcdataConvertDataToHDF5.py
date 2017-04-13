@@ -51,10 +51,13 @@ def main():
 #               'Run-17-03-13-11-48-49']
  
 #    runDirs = ['Run-16-02-02-16-26-26']
-    runDirs = ['Run-16-01-07-12-16-36']
+#    runDirs = ['Run-16-01-07-12-16-36']
+    runDirs = ['Run-17-03-20-18-01-09']
+
+
     for run in runDirs:
-        days = ['160123','160124','160125']
-#        days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
+#        days = ['160123','160124','160125']
+        days = [x for x in os.listdir('/data2/coherent/data/csi/bjs-analysis/%s/'%run) if '.h5' not in x]
         for d in days:
             cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubConvertDataToHDF5.sh -v mainDir="%s",run="%s",day="%s"'%(mainDir,run,d)
             os.system(cmd)

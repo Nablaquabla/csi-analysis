@@ -17,10 +17,11 @@ def main(args):
     mainDir = args[1]
     
     runList = [x for x in np.sort(os.listdir(mainDir)) if 'Run' in x]
-    fOut = h5py.File(mainDir + 'Analyzed/Stability.h5','w')
+    fOut = h5py.File(mainDir + 'Analyzed/Stability.h5','a')
     
     for run in runList:
-
+        if run in fOut:
+            continue
         print run,
         timeArray = []
         baselineArray = []
