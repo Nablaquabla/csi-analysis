@@ -8,11 +8,12 @@ import matplotlib.pylab as plt
 def acceptance(x,p):
     return p[0]/(1.0+np.exp(-p[1]*(x-p[2]))) + p[3]*x
 
-def main():
+def main(minPEinIW):
 
     # Analysis options
     dataDir = '/data2/coherent/data/csi/bjs-analysis/Processed/Analyzed'
     outputDir = '/data2/coherent/data/csi/bjs-analysis/Processed/Analyzed'
+    workingDir = '/nfs_home/bjo/GitHub/csi-analysis'
     nBins = {'NPE': 80, 'Arrival': 150}
 
     # Acceptances from stability analysis
@@ -21,36 +22,21 @@ def main():
     linGateAcceptance = (1.0 - 0.00809)
     pretraceAcceptance = np.array([0.16297553,0.39798555,0.59975277,0.7339427,0.81404367,0.86115311,0.890018,0.90886719,0.92199794,0.93164581])
 
-#    peaksInIW = 8
-#    peaksInPT = 3
-#    minRT050 = 100
-#    maxRT050 = 1000
-#    minRT1090 = 250
-#    maxRT1090 = 1375
-
     # Read uncut simulated spectra
-    uncutNPE = np.loadtxt('Uncut-Signal-NPE-1GWHr.dat')
-    uncutArr = np.loadtxt('Uncut-Signal-Arrival-1GWHr.dat')
+    uncutNPE = np.loadtxt(os.path.join(workingDir,'Uncut-Signal-NPE-1GWHr.dat'))
+    uncutArr = np.loadtxt(os.path.join(workingDir,'Uncut-Signal-Arrival-1GWHr.dat'))
 
     xSimNPE = np.mean(np.reshape(uncutNPE[0],(15,2)),axis=1)
     xSimArr = np.mean(np.reshape(uncutArr[0],(30,5)),axis=1)/1000.0
 
-##
-    minPEIWArr = [6,7,8]
+    minPEIWArr = [minPEinIW]
     peaksInPTArr = np.arange(10)
     minRT050Arr = [0,25,50,75,100]
     maxRT050Arr = [750,1000,1250,1500]
     minRT1090Arr = [0,125,250,375,500]
     maxRT1090Arr = [1125,1250,1375,1500]
-#
-#    minPEIWArr = [7,8]
-#    peaksInPTArr = [3]
-#    minRT050Arr = [0]
-#    maxRT050Arr = [750]
-#    minRT1090Arr = [500]
-#    maxRT1090Arr = [1500]
 
-    fOut = h5py.File(os.path.join(outputDir,'Data-Cuts-FOM.h5'),'w')
+    fOut = h5py.File(os.path.join(outputDir,'Data-Cuts-FOM-%d.h5'%minPEinIW),'w')
     for peaksInIW in minPEIWArr:
         for peaksInPT in peaksInPTArr:
             print peaksInIW, peaksInPT
@@ -130,4 +116,5 @@ def main():
                             fOut.create_dataset(h5OutKey, data=[chi2NPE, chi2Arr])
     fOut.close()
 if __name__ == '__main__':
-    main()
+    minPEinIW = sys.argv[1]
+    main(minPEinIW)
