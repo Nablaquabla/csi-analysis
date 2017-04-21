@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-import h5py
 import os
+import h5py
 import numpy as np
-import easyfy as ez
 import matplotlib.pylab as plt
+import sys
 
 def acceptance(x,p):
     return p[0]/(1.0+np.exp(-p[1]*(x-p[2]))) + p[3]*x
@@ -52,7 +52,7 @@ def main(minPEinIW):
                             h5OutKey = '/Binning-40/PIW-%d-PPT-%d-RT50-%d-%d-RT1090-%d-%d'%(peaksInIW,peaksInPT,minRT050,maxRT050,minRT1090,maxRT1090)
 
                             # Read acceptances
-                            fAcceptance = h5py.File('./Acceptances.h5','r')
+                            fAcceptance = h5py.File(os.path.join(dataDir,'Acceptances.h5'),'r')
                             accPars = fAcceptance['/Binning-40/PIW-%d-PPT-%d-RT50-%d-%d-RT1090-%d-%d'%(peaksInIW,5,minRT050,maxRT050,minRT1090,maxRT1090)][...][0]
                             fAcceptance.close()
 
@@ -117,4 +117,4 @@ def main(minPEinIW):
     fOut.close()
 if __name__ == '__main__':
     minPEinIW = sys.argv[1]
-    main(minPEinIW)
+    main(int(minPEinIW))

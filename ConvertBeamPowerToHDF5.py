@@ -35,10 +35,16 @@ for fIdx in range(len(files)):
                 f.write('%d %d\n'%(tt,pp))
 
 # Open output HDF5 file:
-h5Out = h5py.File(outDir + 'BeamPowerHistory.h5','w')
-for fIdx in range(1,len(files)-1):
+h5Out = h5py.File(outDir + 'BeamPowerHistory.h5','a')
+
+# Check which days are already in the BPH.h5
+cutFiles = np.array([(x[-18:-10] not in h5Out and (int(x[-18:-10]) > 20150623)) for x in files])
+iMin = np.argmax(cutFiles) - 1
+
+
+for fIdx in range(iMin,len(files)-1):
     print files[fIdx][-18:-10]
-    if fIdx == 1:
+    if fIdx == iMin:
         prevDay = np.loadtxt(dataDir + files[fIdx-1]).T
         currDay = np.loadtxt(dataDir + files[fIdx]).T
         nextDay = np.loadtxt(dataDir + files[fIdx+1]).T
