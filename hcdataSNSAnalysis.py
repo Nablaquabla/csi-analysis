@@ -49,12 +49,16 @@ def main(specificDay):
 #    runDirs = ['Run-17-02-02-15-26-34']
 #    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36','Run-16-02-02-16-26-26']
 #    runDirs = ['Run-16-11-02-18-39-29','Run-16-11-04-11-08-14']
-    runDirs = ['Run-17-03-20-18-01-09']
+#    runDirs = ['Run-17-03-20-18-01-09']
 
+    # Ba analysis
+    runDirs = ['Run-15-03-27-12-42-26','Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
+               'Run-15-05-05-16-09-12','Run-15-05-11-11-46-30','Run-15-05-19-17-04-44','Run-15-05-27-11-13-46']
+#    runDirs = ['Run-15-03-27-12-42-26']
     subdirs = {}
     days_in = {}
     for run in runDirs:
-        possibleSubDirs = ['beam_off_data','beam_on_data','sns_data']
+        possibleSubDirs = ['beam_off_data','beam_on_data','sns_data','brillance_data']
         for psd in possibleSubDirs:
             possibleRuns = os.listdir(mainRunDir + psd)
 	    # print possibleRuns
@@ -83,7 +87,7 @@ def main(specificDay):
             
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
-            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",fileNumber="%s",outDir="%s",specificTime="0",time="0"'%(dataRunDir, len(tList), outDir)
+            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="3",dataDir="%s",fileNumber="%s",outDir="%s",specificTime="0",time="0"'%(dataRunDir, len(tList), outDir)
 #            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
 #            print cmd
             os.system(cmd)

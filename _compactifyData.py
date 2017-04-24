@@ -14,6 +14,20 @@ def main(argv):
     mainDir = argv[1]
     run = argv[2]
 
+    # Define timezones used in analysis
+    eastern = pytz.timezone('US/Eastern')
+    utc = pytz.utc
+    epochBeginning = utc.localize(datetime.datetime(1970,1,1))
+
+    # Read times that shall be excluded from the analysis
+    excludeTimes = np.loadtxt(excludeTimeFile,dtype=str)
+
+    exTS = []
+    for t in excludeTimes:
+        exTS.append([(eastern.localize(datetime.datetime.strptime(x,'%Y-%m-%d-%H-%M-%S')).astimezone(utc)-epochBeginning).total_seconds() for x in t])
+
+
+ 
     # Create/open stability HDF5 file that contains all stability data
     h5Out = h5py.File(mainDir + '/Compactified/%s-Compactified.h5'%run,'w')
 
