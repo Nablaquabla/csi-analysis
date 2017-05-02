@@ -6,6 +6,7 @@ import time as tm
 # -----------------------------------------------------------------------------
 def main():
     mainDir = '/data2/coherent/data/csi/bjs-analysis/Processed/'
+    excludeTimeFile = '/nfs_home/bjo/GitHub/csi-analysis/excludeTimes.dat'
     
     # SNS analysis
 #    runDirs = ['Run-15-09-21-20-58-01'] 
@@ -68,7 +69,7 @@ def main():
 #    runDirs = ['Run-15-03-27-12-42-26']
     runDirs = [x for x in os.listdir(mainDir) if 'Run' in x]
     for run in runDirs:
-        cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubCompactifyData.sh -v mainDir="%s",run="%s"'%(mainDir,run)
+        cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubCompactifyData.sh -v mainDir="%s",run="%s",excludeTimeFile="%s"'%(mainDir,run,excludeTimeFile)
         os.system(cmd)
         tm.sleep(1)
 

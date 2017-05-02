@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import time as tm
-
+import numpy as np
 # Main function handling all internals
 # -----------------------------------------------------------------------------
 def main():
@@ -52,8 +52,10 @@ def main():
  
 #    runDirs = ['Run-16-02-02-16-26-26']
 #    runDirs = ['Run-16-01-07-12-16-36']
-    runDirs = ['Run-17-03-20-18-01-09']
+#    runDirs = ['Run-17-03-20-18-01-09']
 
+    # Am analysis
+    runDirs = ['Position-%d'%x for x in np.arange(1,10)]
 
     for run in runDirs:
 #        days = ['160123','160124','160125']

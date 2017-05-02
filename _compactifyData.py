@@ -4,6 +4,8 @@ import h5py
 import numpy as np
 import os
 import sys
+import pytz
+import datetime
 
 dataKeys = ['timestamp','median-csi-baseline','average-csi-baseline','std-csi-baseline',
             'vanilla-pt-peaks','vanilla-roi-peaks','vanilla-iw-peaks','vanilla-arrival-index','vanilla-charge','vanilla-rt-10','vanilla-rt-50','vanilla-rt-90',
@@ -13,6 +15,9 @@ dataKeys = ['timestamp','median-csi-baseline','average-csi-baseline','std-csi-ba
 def main(argv):
     mainDir = argv[1]
     run = argv[2]
+    excludeTimeFile = argv[3]
+
+    excludeTimes = np.loadtxt(excludeTimeFile,dtype=str)
         
     # Define timezones used in analysis
     eastern = pytz.timezone('US/Eastern')
@@ -62,7 +67,8 @@ def main(argv):
             infoData[wd]['bad-triggers'] = infoData[wd]['bad-triggers'] + np.sum(beamBad)
             infoData[wd]['power'] = infoData[wd]['power'] + np.sum(currentPower[beamOn])/1.0e6/3600.0/60.0
                
-            
+            timestamps = h5In['/%s/timestamp'%wd][...] 
+            peaksInROI = h5In['/%s/vanilla-roi-peaks'%wd][...]
             peaksInIW = h5In['/%s/vanilla-iw-peaks'%wd][...]
             peaksInPT = h5In['/%s/vanilla-pt-peaks'%wd][...]
             rt1090 = h5In['/%s/lbl-rt-90'%wd][...] - h5In['/%s/lbl-rt-10'%wd][...]
@@ -74,7 +80,9 @@ def main(argv):
             power = h5In['/%s/beam-power'%wd][...]
             overflow = h5In['/%s/overflow-flag'%wd][...]
             muonVeto = h5In['/%s/muon-veto-flag'%wd][...]
-            linearGate = h5In['/%s/linear-gate-flag'%wd][...]      
+            linearGate = h5In['/%s/linear-gate-flag'%wd][...]
+            avgBaseline = h5In['/%s/average-csi-baseline'%wd][...]
+            stdBaseline = h5In['/%s/std-csi-baseline'%wd][...]
             NPE[np.isnan(NPE)] = -1
 
             # Remove data within any excluded time window
@@ -83,7 +91,7 @@ def main(argv):
                 timeExclusionCut = timeExclusionCut + np.asarray((timestamps >= t[0]) * (timestamps <= t[1]),dtype=int)
             timeExclusionCut = np.logical_not(np.asarray(timeExclusionCut,dtype=bool))
 
-            if np.sum(timeExclusionCut) != 0:  
+            if np.any(timeExclusionCut):  
                 currentPower = power[timeExclusionCut]
                 beamOn = (currentPower > 10)
                 beamOff = (currentPower <= 10) * (currentPower >= -0.1)
@@ -95,7 +103,7 @@ def main(argv):
 
                 infoData[wd]['power'] = infoData[wd]['power'] + np.sum(currentPower[beamOn])/1.0e6/3600.0/60.0
                         
-                cutIW = np.logical_or((peaksInIW >= 6),(NPE > 30))
+                cutIW = np.logical_or((peaksInIW >= 6),(NPE >= 30))
                 cutPT = peaksInPT <= 10
                 cutPower = power > -0.9
                 cutLinGate = linearGate == 0
@@ -105,10 +113,7 @@ def main(argv):
 
             else:
                 cutTotal = timeExclusionCut
-                
-            for key in infoData[wd].keys():
-                fOut.attrs['/%s/%s/%s'(d,wd,key)] = infoData[wd][key]
-                
+               
             h5Out.create_dataset('/%s/%s/peaks-in-pt'%(d,wd), data=peaksInPT[cutTotal])
             h5Out.create_dataset('/%s/%s/peaks-in-iw'%(d,wd), data=peaksInIW[cutTotal])
             h5Out.create_dataset('/%s/%s/rt1090'%(d,wd), data=rt1090[cutTotal])
@@ -117,7 +122,13 @@ def main(argv):
             h5Out.create_dataset('/%s/%s/arrival'%(d,wd), data=arrivalIndex[cutTotal])
             h5Out.create_dataset('/%s/%s/power'%(d,wd), data=power[cutTotal])
             h5Out.create_dataset('/%s/%s/overflow'%(d,wd), data=overflow[cutTotal])
-            
+            h5Out.create_dataset('/%s/%s/timestamp'%(d,wd), data=timestamps[cutTotal])
+            h5Out.create_dataset('/%s/%s/average-baseline'%(d,wd), data=avgBaseline[cutTotal])
+            h5Out.create_dataset('/%s/%s/std-baseline'%(d,wd), data=stdBaseline[cutTotal])
+            h5Out.create_dataset('/%s/%s/peaks-in-roi'%(d,wd), data=peaksInROI[cutTotal])
+            for key in infoData[wd].keys():
+                h5Out[d][wd].attrs['%s'%(key)] = infoData[wd][key]
+             
         h5In.close()
     h5Out.close()
 # ============================================================================
