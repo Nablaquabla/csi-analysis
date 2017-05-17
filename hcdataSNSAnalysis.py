@@ -8,7 +8,8 @@ import numpy as np
 # -----------------------------------------------------------------------------
 def main(specificDay):       
     # Choose main directory, i.e. ~/csi/beam_on_data/Run-15-06-25-xyz/
-    mainRunDir = '/data2/coherent/data/csi/'
+#    mainRunDir = '/data2/coherent/data/csi/'
+    mainRunDir = '/data3/coherent/data/csi/'
     
     # Choose output directory, i.e. ~/output/Run-15-06-25-xyz/
     mainOutDir = '/data2/coherent/data/csi/bjs-analysis/'
@@ -51,6 +52,10 @@ def main(specificDay):
 #    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36','Run-16-02-02-16-26-26']
 #    runDirs = ['Run-16-11-02-18-39-29','Run-16-11-04-11-08-14']
 #    runDirs = ['Run-17-03-20-18-01-09']
+#    runDirs = ['Run-17-03-27-13-26-45']
+#    runDirs = ['Run-17-04-05-18-47-04','Run-17-04-10-11-14-04']
+#    runDirs = ['Run-17-04-17-16-14-23','Run-17-04-24-10-13-09','Run-17-05-01-09-57-15']
+    runDirs = ['Run-17-05-08-09-34-23','Run-17-05-09-14-09-13']
 
     # Ba analysis
 #    runDirs = ['Run-15-03-27-12-42-26','Run-15-03-30-13-33-05','Run-15-04-08-11-38-28','Run-15-04-17-16-56-59','Run-15-04-29-16-34-44',
@@ -58,12 +63,16 @@ def main(specificDay):
 #    runDirs = ['Run-15-03-27-12-42-26']
     
     # Am analysis
-    runDirs = ['Position-%d'%x for x in np.arange(1,10)]
+#    runDirs = ['Position-%d'%x for x in np.arange(1,10)]
 
+    
     subdirs = {}
     days_in = {}
     for run in runDirs:
-        possibleSubDirs = ['beam_off_data','beam_on_data','sns_data','brillance_data','am_calibration_1350v']
+        if 'data2' in mainRunDir:
+            possibleSubDirs = ['beam_off_data','beam_on_data','sns_data','brillance_data','am_calibration_1350v']
+        else:
+            possibleSubDirs = ['sns_data']
         for psd in possibleSubDirs:
             possibleRuns = os.listdir(mainRunDir + psd)
 	    # print possibleRuns
@@ -92,7 +101,7 @@ def main(specificDay):
             
             # Get all times within the day folder chosen and prepare condor submit files
             tList = [x.split('.')[0] for x in os.listdir(dataRunDir)]
-            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="2",dataDir="%s",fileNumber="%s",outDir="%s",specificTime="0",time="0"'%(dataRunDir, len(tList), outDir)
+            cmd = 'qsub -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",fileNumber="%s",outDir="%s",specificTime="0",time="0"'%(dataRunDir, len(tList), outDir)
 #            cmd = 'qsub -t 1-%i -V /nfs_home/bjo/GitHub/csi-analysis/_qsubSNSAnalysis.sh -v analysisMode="1",dataDir="%s",outDir="%s",specificTime="0",time="0"'%(len(tList), dataRunDir, outDir)
 #            print cmd
             os.system(cmd)

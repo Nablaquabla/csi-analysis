@@ -7,7 +7,7 @@ import sys
 # -----------------------------------------------------------------------------
 def main(showMissing,runMissing):       
     # Choose main directory, i.e. ~/csi/beam_on_data/Run-15-06-25-xyz/
-    mainRunDir = '/data2/coherent/data/csi/'
+    mainRunDir = '/data3/coherent/data/csi/'
     
     # Choose output directory, i.e. ~/output/Run-15-06-25-xyz/
     mainOutDir = '/data2/coherent/data/csi/bjs-analysis/'
@@ -47,14 +47,21 @@ def main(showMissing,runMissing):
 #    runDirs = ['Run-16-08-27-11-33-40','Run-16-08-30-11-37-42','Run-16-09-06-15-23-15','Run-16-09-15-15-23-58']
 #    runDirs = ['Run-16-09-26-15-34-10','Run-16-10-04-16-48-32','Run-16-10-07-15-32-53','Run-16-10-18-14-36-17']
 #    runDirs = ['Run-15-12-26-08-30-40','Run-16-01-07-12-16-36','Run-16-02-02-16-26-26']
-    runDirs = ['Run-17-03-20-18-01-09']
+#    runDirs = ['Run-17-03-20-18-01-09']
+#    runDirs = ['Run-17-03-27-13-26-45']
+#    runDirs = ['Run-17-04-05-18-47-04','Run-17-04-10-11-14-04']
+    runDirs = ['Run-17-04-17-16-14-23','Run-17-04-24-10-13-09','Run-17-05-01-09-57-15']
+
+
 
 
  #   runDirs = [x for x in os.listdir(mainOutDir) if 'Run' in x]
     subdirs = {}
     days_in = {}
-    possibleSubDirs = ['beam_off_data','beam_on_data','sns_data']
-    
+    if 'data2' in mainRunDir:
+        possibleSubDirs = ['beam_off_data','beam_on_data','sns_data']
+    else:
+        possibleSubDirs = ['sns_data']
     for run in runDirs:        
         for psd in possibleSubDirs:
             possibleRuns = os.listdir(mainRunDir + psd)
