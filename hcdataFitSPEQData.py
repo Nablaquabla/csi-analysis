@@ -60,10 +60,15 @@ def main():
 #               'Run-15-10-21-13-12-27','Run-15-10-29-15-56-36','Run-15-11-09-11-30-13',
 #               'Run-15-11-20-11-34-48','Run-15-11-24-15-35-32','Run-15-12-14-11-21-45']
 #    runDirs = ['Run-17-03-20-18-01-09']
+    runDirs = ['Run-17-03-27-13-26-45']
+#    runDirs = ['Run-17-04-05-18-47-04','Run-17-04-10-11-14-04']
+#    runDirs = ['Run-17-04-17-16-14-23','Run-17-04-24-10-13-09','Run-17-05-01-09-57-15']
+#    runDirs = ['Run-17-05-08-09-34-23','Run-17-05-09-14-09-13']
+
 
     # Am analysis
-    import numpy as np
-    runDirs = ['Position-%d'%x for x in np.arange(1,10)]
+#    import numpy as np
+#    runDirs = ['Position-%d'%x for x in np.arange(1,10)]
 
 
 
