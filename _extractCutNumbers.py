@@ -190,12 +190,12 @@ def main(argv):
         # Subtract vetoed triggers fromt he total number of events
         for wd in ['S','B']:
 
-            infoData[wd]['on-triggers-wo-flags'] -= int(np.ceil(flags['O']*(1.0*nFlagsWEvents['O']['on']/(nFlagsWEvents['O']['on']+nFlagsWEvents['O']['off'])) +
-                                                     flags['LG']*(1.0*nFlagsWEvents['LG']['on']/(nFlagsWEvents['LG']['on']+nFlagsWEvents['LG']['off'])) +
-                                                     flags['MV']*(1.0*nFlagsWEvents['MV']['on']/(nFlagsWEvents['MV']['on']+nFlagsWEvents['MV']['off']))))
-            infoData[wd]['off-triggers-wo-flags'] -= int(np.ceil(flags['O']*(1.0*nFlagsWEvents['O']['off']/(nFlagsWEvents['O']['on']+nFlagsWEvents['O']['off'])) +
-                                                     flags['LG']*(1.0*nFlagsWEvents['LG']['off']/(nFlagsWEvents['LG']['on']+nFlagsWEvents['LG']['off'])) +
-                                                     flags['MV']*(1.0*nFlagsWEvents['MV']['off']/(nFlagsWEvents['MV']['on']+nFlagsWEvents['MV']['off']))))
+            infoData[wd]['on-triggers-wo-flags'] -= int(np.ceil(flags['O']*(1.0*nFlagsWEvents['O']['on']/np.clip(nFlagsWEvents['O']['on']+nFlagsWEvents['O']['off'],1,np.inf)) +
+                                                     flags['LG']*(1.0*nFlagsWEvents['LG']['on']/np.clip(nFlagsWEvents['LG']['on']+nFlagsWEvents['LG']['off'],1,np.inf)) +
+                                                     flags['MV']*(1.0*nFlagsWEvents['MV']['on']/np.clip(nFlagsWEvents['MV']['on']+nFlagsWEvents['MV']['off'],1,np.inf))))
+            infoData[wd]['off-triggers-wo-flags'] -= int(np.ceil(flags['O']*(1.0*nFlagsWEvents['O']['off']/np.clip(nFlagsWEvents['O']['on']+nFlagsWEvents['O']['off'],1,np.inf)) +
+                                                     flags['LG']*(1.0*nFlagsWEvents['LG']['off']/np.clip(nFlagsWEvents['LG']['on']+nFlagsWEvents['LG']['off'],1,np.inf)) +
+                                                     flags['MV']*(1.0*nFlagsWEvents['MV']['off']/np.clip(nFlagsWEvents['MV']['on']+nFlagsWEvents['MV']['off'],1,np.inf))))
 
             deltaTrigs = infoData[wd]['on-triggers-wo-flags'] + infoData[wd]['off-triggers-wo-flags'] - infoData[wd]['total-triggers-wo-flags']
             if deltaTrigs < 0:

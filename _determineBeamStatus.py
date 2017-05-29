@@ -6,6 +6,9 @@ import os
 import sys
 import datetime
 
+dataSet = 'SNS'
+#dataSet = 'Ba'
+
 def main(argv):
 
     run = argv[2]
@@ -20,12 +23,15 @@ def main(argv):
     dayKeys = [x.strftime('%Y%m%d') for x in dayTSArray]
 
     # Read power data for current day +/- one day
-    timeData = np.array([0])
-    powerData = np.array([0])
-    for dk in dayKeys:
-        timeData = np.concatenate((timeData,bPF['/%s/time'%dk][...]))
-        powerData = np.concatenate((powerData,bPF['/%s/power'%dk][...]))
-
+    if dataSet == 'SNS':
+        timeData = np.array([0])
+        powerData = np.array([0])
+        for dk in dayKeys:
+            timeData = np.concatenate((timeData,bPF['/%s/time'%dk][...]))
+            powerData = np.concatenate((powerData,bPF['/%s/power'%dk][...]))
+    elif dataSet == 'Ba':
+        timeData = np.zeros(2)
+        powerData = np.zeros(2)
     # Open HDF5 file
     f = h5py.File(dataDir + run + '/' + d + '.h5', 'r+')
 
@@ -68,38 +74,44 @@ def main(argv):
 #            beamPowerWithoutEvent.append(powerData[np.where(nets == timeData)])
 
         # Determine power for all triggers w event
-        idx = 0
-        for evt in evtTS:
-            pwr = 0
-            while True:
-                if evt == cTime[idx]:
-                    pwr = cPower[idx]
-                    break
-                else:
-                    if evt > cTime[idx]:
-                        idx += 1
-                        continue
-                    if evt < cTime[idx]:
-                        idx -= 1
-                        continue
-            beamPowerWithEvent.append(pwr)
+        if dataSet == 'SNS':
+            idx = 0
+            for evt in evtTS:
+                pwr = 0
+                while True:
+                    if evt == cTime[idx]:
+                        pwr = cPower[idx]
+                        break
+                    else:
+                        if evt > cTime[idx]:
+                            idx += 1
+                            continue
+                        if evt < cTime[idx]:
+                            idx -= 1
+                            continue
+                beamPowerWithEvent.append(pwr)
 
-        # Determine power for all triggers w/o event
-        idx = 0
-        for evt in noEvtTS:
-            pwr = 0
-            while True:
-                if evt == cTime[idx]:
-                    pwr = cPower[idx]
-                    break
-                else:
-                    if evt > cTime[idx]:
-                        idx += 1
-                        continue
-                    if evt < cTime[idx]:
-                        idx -= 1
-                        continue
-            beamPowerWithoutEvent.append(pwr)
+            # Determine power for all triggers w/o event
+            idx = 0
+            for evt in noEvtTS:
+                pwr = 0
+                while True:
+                    if evt == cTime[idx]:
+                        pwr = cPower[idx]
+                        break
+                    else:
+                        if evt > cTime[idx]:
+                            idx += 1
+                            continue
+                        if evt < cTime[idx]:
+                            idx -= 1
+                            continue
+                beamPowerWithoutEvent.append(pwr)
+        elif dataSet == 'Ba':
+            for evt in evtTS:
+                beamPowerWithEvent.append(0)
+            for evt in noEvtTS:
+                beamPowerWithoutEvent.append(0)
 
         # Write beam on flag to HDF5 file
         f.create_dataset('/%s/beam-power'%wd,data=beamPowerWithEvent,dtype=np.float)

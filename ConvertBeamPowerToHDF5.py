@@ -112,8 +112,8 @@ for fIdx in range(iMin,len(files)-1):
         if not ((currDay[1][-1] == 0) and (nextDay[1][0] == 0)):
             for _tIdx in range(wIdx,len(wT)):
                 wP[_tIdx] = -1
-
-    h5Out.create_dataset('/%s/time'%files[fIdx][-18:-10],data=wT,dtype=np.uint32)
-    h5Out.create_dataset('/%s/power'%files[fIdx][-18:-10],data=wP,dtype=np.float)
+    if files[fIdx][-18:-10] not in h5Out:
+        h5Out.create_dataset('/%s/time'%files[fIdx][-18:-10],data=wT,dtype=np.uint32)
+        h5Out.create_dataset('/%s/power'%files[fIdx][-18:-10],data=wP,dtype=np.float)
 
 h5Out.close()
